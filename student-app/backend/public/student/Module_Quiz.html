@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" style="height: auto; min-height: 100%;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArNita Infotech - Module Quiz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link id="heading-font-link" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link id="body-font-link" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['var(--font-heading-name)', 'sans-serif'],
+            body: ['var(--font-body-name)', 'sans-serif'],
+          },
+          spacing: {
+            base: 'var(--space-base)',
+          },
+          borderRadius: {
+            small: 'var(--radius-small)',
+            large: 'var(--radius-large)',
+          },
+          boxShadow: {
+            custom: 'var(--shadow-custom)',
+            'custom-hover': 'var(--shadow-custom-hover)',
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --font-heading-name: 'Poppins';
+      --font-body-name: 'Work Sans';
+      --font-heading: 'Poppins', sans-serif;
+      --font-body: 'Work Sans', sans-serif;
+      --letter-spacing-heading: -0.5px;
+      --letter-spacing-body: 0px;
+      --space-base: 1rem;
+      --radius-small: 8px;
+      --radius-large: 16px;
+      --border-width: 1.5px;
+      --shadow-color: 15 23 42;
+      --shadow-offset-x: 0px;
+      --shadow-offset-y: 4px;
+      --shadow-blur: 24px;
+      --shadow-spread: 0px;
+      --shadow-opacity: 0.08;
+      --shadow-custom: 0px 4px 24px 0px rgba(15, 23, 42, 0.08);
+      --shadow-custom-hover: 0px 8px 40px 0px rgba(15, 23, 42, 0.14);
+    }
+
+    .option-btn {
+      transition: all 0.15s ease;
+    }
+    .option-btn:hover:not(.selected):not(.correct):not(.incorrect) {
+      border-color: #6366f1;
+      background-color: #eef2ff;
+    }
+    .option-btn.selected {
+      border-color: #6366f1;
+      background-color: #eef2ff;
+    }
+    .option-btn.correct {
+      border-color: #10b981;
+      background-color: #ecfdf5;
+    }
+    .option-btn.incorrect {
+      border-color: #ef4444;
+      background-color: #fef2f2;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in {
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    @keyframes countUp {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .score-anim {
+      animation: countUp 0.5s ease 0.3s both;
+    }
+
+    .timer-warning {
+      color: #ef4444;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+  </style>
+</head>
+
+<body class="font-body bg-gray-50 text-neutral-900" style="height: auto; min-height: 100%;">
+
+  <!-- Top Navigation Bar -->
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <div class="px-4 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 min-w-0">
+        <a href="/home" class="flex items-center gap-2 flex-shrink-0">
+          <div class="w-8 h-8 bg-indigo-600 rounded-small flex items-center justify-center">
+            <span class="text-white font-heading font-bold text-xs">AI</span>
+          </div>
+          <span class="font-heading font-bold text-base text-neutral-900 tracking-tight hidden sm:block">ArNita Infotech</span>
+        </a>
+        <span class="text-neutral-300 hidden sm:block">›</span>
+        <a id="quizCourseTitle" href="/courses" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium transition-colors truncate hidden md:block max-w-xs">Course</a>
+        <span class="text-neutral-300 hidden md:block">›</span>
+        <span id="quizPageTitle" class="text-neutral-800 text-sm font-semibold truncate hidden md:block">Module Quiz</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="/lesson" class="hidden sm:inline-flex items-center gap-1.5 text-neutral-600 hover:text-indigo-600 font-medium text-sm px-3 py-1.5 rounded-small hover:bg-neutral-100 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Back to Lesson
+        </a>
+        <a href="/dashboard" class="hidden sm:inline-flex text-neutral-600 hover:text-indigo-600 font-medium text-sm px-3 py-1.5 rounded-small hover:bg-neutral-100 transition-colors">Dashboard</a>
+        <a href="/profile" class="flex items-center gap-2 hover:bg-neutral-100 rounded-small px-2 py-1.5 transition-colors">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&fit=crop&crop=face" alt="Profile" class="w-7 h-7 rounded-full object-cover border-2 border-indigo-200">
+          <span id="quizUserName" class="text-sm font-medium text-neutral-700 hidden sm:block">Student</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== QUIZ VIEW ===== -->
+  <div id="quiz-view">
+
+    <!-- Quiz Header Bar -->
+    <div class="bg-white border-b border-neutral-200 max-h-[120px]">
+      <div class="max-w-3xl mx-auto px-6 py-4">
+        <!-- Top Row: Module badge + Timer -->
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span id="quizModuleBadge" class="bg-violet-100 text-violet-700 text-xs font-bold px-2.5 py-1 rounded-small">Module Quiz</span>
+            <span id="quizModuleSubtitle" class="text-neutral-500 text-xs font-medium">Loading quiz...</span>
+          </div>
+          <!-- Timer -->
+          <div id="timer-display" class="flex items-center gap-2 bg-neutral-50 border border-neutral-200 rounded-small px-3 py-1.5">
+            <svg class="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span id="timer-text" class="text-sm font-semibold text-neutral-700 font-mono">00:00</span>
+          </div>
+        </div>
+        <!-- Progress Bar Row -->
+        <div class="flex items-center gap-3">
+          <div class="flex-1 bg-neutral-100 rounded-full h-2">
+            <div id="progress-bar" class="bg-indigo-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <span id="progress-text" class="text-xs font-semibold text-indigo-600 whitespace-nowrap">0 / 0</span>
+        </div>
+        <!-- Question dots -->
+        <div class="flex items-center gap-1.5 mt-2.5">
+          <div id="q-dot-1" class="w-2 h-2 rounded-full bg-emerald-500"></div>
+          <div id="q-dot-2" class="w-2 h-2 rounded-full bg-emerald-500"></div>
+          <div id="q-dot-3" class="w-2 h-2 rounded-full bg-indigo-600"></div>
+          <div id="q-dot-4" class="w-2 h-2 rounded-full bg-neutral-200"></div>
+          <div id="q-dot-5" class="w-2 h-2 rounded-full bg-neutral-200"></div>
+          <div id="q-dot-6" class="w-2 h-2 rounded-full bg-neutral-200"></div>
+          <div id="q-dot-7" class="w-2 h-2 rounded-full bg-neutral-200"></div>
+          <div id="q-dot-8" class="w-2 h-2 rounded-full bg-neutral-200"></div>
+          <div id="q-dot-9" class="w-2 h-2 rounded-full bg-neutral-200"></div>
+          <div id="q-dot-10" class="w-2 h-2 rounded-full bg-neutral-200"></div>
+          <span class="text-xs text-neutral-400 ml-1">Questions</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz Content -->
+    <div class="max-w-3xl mx-auto px-6 py-8">
+
+      <!-- Question Card -->
+      <div id="question-card" class="bg-white rounded-large shadow-custom p-8 mb-6 fade-in max-h-[700px]">
+
+        <!-- Question Number + Category -->
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-2">
+            <span id="questionNumberBadge" class="bg-indigo-600 text-white text-xs font-bold px-2.5 py-1 rounded-small">Q1</span>
+            <span id="questionCategoryBadge" class="bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-small">Question</span>
+          </div>
+          <span class="text-xs text-neutral-400 font-medium">1 point</span>
+        </div>
+
+        <!-- Question Text -->
+        <h2 id="questionText" class="font-heading font-semibold text-xl text-neutral-900 mb-6 leading-snug" style="letter-spacing: var(--letter-spacing-heading);">
+          Loading question...
+        </h2>
+
+        <!-- Answer Options -->
+        <div class="space-y-3" id="options-container"></div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="flex items-center justify-between gap-4">
+        <button onclick="prevQuestion()" class="flex items-center gap-2 border border-neutral-200 hover:border-indigo-300 hover:bg-indigo-50 text-neutral-700 hover:text-indigo-700 font-medium text-sm px-5 py-3 rounded-small transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Previous
+        </button>
+
+        <button onclick="nextQuestion()" id="next-btn" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-6 py-3 rounded-small transition-colors shadow-custom">
+          Next Question
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <!-- Submit Quiz Button -->
+      <div class="mt-4 text-center">
+        <button onclick="submitQuiz()" class="inline-flex items-center gap-2 bg-neutral-800 hover:bg-neutral-900 text-white font-semibold text-sm px-8 py-3 rounded-small transition-colors shadow-custom">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          Submit Quiz
+        </button>
+        <p class="text-xs text-neutral-400 mt-2">You can submit at any time. Unanswered questions will be marked incorrect.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-neutral-900 max-h-[400px]">
+    <div class="max-w-7xl mx-auto px-6 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div class="col-span-1 md:col-span-2">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-9 h-9 bg-indigo-500 rounded-small flex items-center justify-center">
+              <span class="text-white font-heading font-bold text-sm">AI</span>
+            </div>
+            <span class="font-heading font-bold text-xl text-white">ArNita Infotech</span>
+          </div>
+          <p class="text-neutral-400 text-sm leading-relaxed max-w-xs">Empowering learners worldwide with expert-led courses, interactive modules, and verified certificates.</p>
+        </div>
+        <div>
+          <h4 class="font-heading font-semibold text-white text-sm mb-4">Platform</h4>
+          <ul class="space-y-2.5">
+            <li><a href="/courses" class="text-neutral-400 hover:text-white text-sm transition-colors">Course Catalog</a></li>
+            <li><a href="/courses" class="text-neutral-400 hover:text-white text-sm transition-colors">Course Detail</a></li>
+            <li><a href="/lesson" class="text-neutral-400 hover:text-white text-sm transition-colors">Module Lessons</a></li>
+            <li><a href="/module-quiz" class="text-neutral-400 hover:text-white text-sm transition-colors">Module Quizzes</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-heading font-semibold text-white text-sm mb-4">Account</h4>
+          <ul class="space-y-2.5">
+            <li><a href="/dashboard" class="text-neutral-400 hover:text-white text-sm transition-colors">Dashboard</a></li>
+            <li><a href="/profile" class="text-neutral-400 hover:text-white text-sm transition-colors">Profile</a></li>
+            <li><a href="/final-exam" class="text-neutral-400 hover:text-white text-sm transition-colors">Final Exam</a></li>
+            <li><a href="/certificate" class="text-neutral-400 hover:text-white text-sm transition-colors">Certificates</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-neutral-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-neutral-500 text-xs">© 2024 ArNita Infotech. All rights reserved.</p>
+        <div class="flex items-center gap-6">
+          <a href="#" class="text-neutral-500 hover:text-white text-xs transition-colors">Privacy Policy</a>
+          <a href="#" class="text-neutral-500 hover:text-white text-xs transition-colors">Terms of Service</a>
+          <a href="#" class="text-neutral-500 hover:text-white text-xs transition-colors">Support</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let timeLeft = 0;
+    let timerInterval = null;
+
+    function startQuizTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(function () {
+        timeLeft--;
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          submitQuiz();
+          return;
+        }
+
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        const timerText = document.getElementById("timer-text");
+        timerText.textContent = mins + ":" + (secs < 10 ? "0" : "") + secs;
+
+        const timerDisplay = document.getElementById("timer-display");
+        if (timeLeft <= 120) {
+          timerText.classList.add("timer-warning");
+          timerDisplay.classList.add("border-rose-300", "bg-rose-50");
+          timerDisplay.classList.remove("border-neutral-200", "bg-neutral-50");
+        }
+      }, 1000);
+    }
+  </script>
+  <script>
+  let quizData = null;
+  let currentQuestionIndex = 0;
+  let selectedAnswers = [];
+
+  function renderQuestion() {
+    if (!quizData || !quizData.questions || !quizData.questions.length) return;
+    const question = quizData.questions[currentQuestionIndex];
+    document.getElementById("questionText").textContent = question.questionText || "Question";
+    document.getElementById("questionNumberBadge").textContent = `Q${currentQuestionIndex + 1}`;
+    document.getElementById("questionCategoryBadge").textContent = quizData.title || "Question";
+    document.getElementById("progress-text").textContent = `${currentQuestionIndex + 1} / ${quizData.questions.length}`;
+    document.getElementById("progress-bar").style.width =
+      `${((currentQuestionIndex + 1) / quizData.questions.length) * 100}%`;
+
+    const optionsContainer = document.getElementById("options-container");
+    optionsContainer.innerHTML = "";
+
+    question.options.forEach((option, index) => {
+      const optionLetter = String.fromCharCode(65 + index);
+      const button = document.createElement("button");
+      button.className = "option-btn w-full flex items-center gap-4 p-4 border-2 border-neutral-200 rounded-large text-left group";
+      if (selectedAnswers[currentQuestionIndex] === index) {
+        button.classList.add("selected");
+      }
+
+      button.innerHTML = `
+        <div class="w-8 h-8 rounded-small border-2 border-neutral-300 flex items-center justify-center flex-shrink-0 font-heading font-bold text-sm text-neutral-500">${optionLetter}</div>
+        <span class="text-neutral-700 text-sm font-medium">${option}</span>
+      `;
+
+      button.onclick = () => {
+        selectedAnswers[currentQuestionIndex] = index;
+        renderQuestion();
+      };
+
+      optionsContainer.appendChild(button);
+    });
+  }
+
+  function nextQuestion() {
+    if (currentQuestionIndex < quizData.questions.length - 1) {
+      currentQuestionIndex++;
+      renderQuestion();
+    }
+  }
+
+  function prevQuestion() {
+    if (currentQuestionIndex > 0) {
+      currentQuestionIndex--;
+      renderQuestion();
+    }
+  }
+
+  async function submitQuiz() {
+    const params = new URLSearchParams(window.location.search);
+    const moduleId = params.get("moduleId");
+    if (!moduleId) return;
+
+    const res = await fetch(`/api/quiz/module/${moduleId}/submit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        answers: selectedAnswers
+      })
+    });
+
+    const result = await res.json();
+
+    if (result.passed) {
+      alert(`Quiz passed! Score: ${result.score}%`);
+      window.location.href = "/dashboard";
+    } else {
+      alert(`Quiz failed. Score: ${result.score}%. Please retry.`);
+    }
+  }
+
+  async function loadQuiz() {
+
+    const params = new URLSearchParams(window.location.search);
+    const moduleId = params.get("moduleId");
+    if (!moduleId) return;
+
+    const res = await fetch(`/api/quiz/module/${moduleId}`, {
+      credentials: "include"
+    });
+
+    if (!res.ok) {
+      alert("Quiz is locked or not found.");
+      return;
+    }
+
+    const data = await res.json();
+
+    const quizCourseTitle = document.getElementById("quizCourseTitle");
+    if (quizCourseTitle) {
+      quizCourseTitle.textContent = data.course?.title || "Course";
+      quizCourseTitle.href = data.course?.slug ? `/course-detail?slug=${data.course.slug}` : "/courses";
+    }
+
+    quizData = data.quiz;
+    timeLeft = (quizData.durationMinutes || 15) * 60;
+    document.getElementById("timer-text").textContent = `${quizData.durationMinutes || 15}:00`;
+    startQuizTimer();
+    document.getElementById("quizModuleBadge").textContent = data.quiz.title || "Module Quiz";
+    document.getElementById("quizModuleSubtitle").textContent = "Answer all questions and submit your quiz.";
+    document.getElementById("quizPageTitle").textContent = data.quiz.title || "Module Quiz";
+    selectedAnswers = new Array(quizData.questions.length).fill(null);
+
+    renderQuestion();
+    try {
+      const profileRes = await fetch("/api/profile/me", { credentials: "include" });
+      if (profileRes.ok) {
+        const profile = await profileRes.json();
+        const quizUserName = document.getElementById("quizUserName");
+        if (quizUserName) {
+          quizUserName.textContent = profile.name || "Student";
+        }
+      }
+    } catch (err) {
+      console.error("Error loading quiz user:", err);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadQuiz();
+
+    window.nextQuestion = nextQuestion;
+    window.prevQuestion = prevQuestion;
+    window.submitQuiz = submitQuiz;
+  });
+</script>
+</body>
+</html>

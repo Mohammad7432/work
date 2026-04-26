@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" style="height:auto; min-height:100%;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArNita Infotech - Admin Users</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Poppins', 'sans-serif'],
+            body: ['Work Sans', 'sans-serif'],
+          },
+          borderRadius: {
+            small: '8px',
+            large: '16px',
+          },
+          boxShadow: {
+            custom: '0px 4px 24px 0px rgba(15, 23, 42, 0.08)',
+            'custom-hover': '0px 8px 40px 0px rgba(15, 23, 42, 0.14)',
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-body bg-gray-50 text-neutral-900 min-h-screen">
+
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/admin-dashboard" class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-indigo-600 rounded-small flex items-center justify-center">
+          <span class="text-white font-heading font-bold text-sm">AI</span>
+        </div>
+        <span class="font-heading font-bold text-xl text-neutral-900">ArNita Infotech</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/admin-dashboard" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Dashboard</a>
+        <a href="./admin_users.html" class="text-indigo-600 text-sm font-medium">Users</a>
+        <a href="./admin_profile.html" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Profile</a>
+      </div>
+
+      <a href="/logout" class="text-sm font-medium text-neutral-700 hover:text-indigo-600">Logout</a>
+    </div>
+  </nav>
+
+  <section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="mb-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+      <div>
+        <p class="text-sm text-indigo-600 font-semibold mb-2">Admin User Control</p>
+        <h1 class="font-heading font-extrabold text-3xl md:text-4xl text-neutral-900">Manage Users</h1>
+        <p class="text-neutral-600 mt-2">Review students, teachers, and admins across the platform.</p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input
+          id="adminUsersSearch"
+          type="text"
+          placeholder="Search users..."
+          class="w-full sm:w-72 px-4 py-3 border border-neutral-300 rounded-small text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 bg-white"
+        />
+        <select
+          id="adminUsersRoleFilter"
+          class="w-full sm:w-52 px-4 py-3 border border-neutral-300 rounded-small text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 bg-white"
+        >
+          <option value="">All Roles</option>
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Total Users</p>
+        <h2 id="totalUsersCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Students</p>
+        <h2 id="studentUsersCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Teachers</p>
+        <h2 id="teacherUsersCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Admins</p>
+        <h2 id="adminUsersCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-large shadow-custom overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-neutral-50 border-b border-neutral-200">
+            <tr>
+              <th class="text-left px-6 py-4 font-semibold text-neutral-700">Name</th>
+              <th class="text-left px-6 py-4 font-semibold text-neutral-700">Email</th>
+              <th class="text-left px-6 py-4 font-semibold text-neutral-700">Role</th>
+              <th class="text-left px-6 py-4 font-semibold text-neutral-700">Status</th>
+              <th class="text-left px-6 py-4 font-semibold text-neutral-700">Joined</th>
+            </tr>
+          </thead>
+          <tbody id="adminUsersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let adminUsers = [];
+
+    function updateAdminUsersSummary(items) {
+      document.getElementById("totalUsersCount").textContent = items.length;
+      document.getElementById("studentUsersCount").textContent = items.filter(u => u.role === "student").length;
+      document.getElementById("teacherUsersCount").textContent = items.filter(u => u.role === "teacher").length;
+      document.getElementById("adminUsersCount").textContent = items.filter(u => u.role === "admin").length;
+    }
+
+    function formatJoinDate(value) {
+      if (!value) return "—";
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return "—";
+      return date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      });
+    }
+
+    function renderAdminUsers() {
+      const searchText = (document.getElementById("adminUsersSearch").value || "").toLowerCase().trim();
+      const selectedRole = document.getElementById("adminUsersRoleFilter").value;
+      const body = document.getElementById("adminUsersTableBody");
+
+      const filtered = adminUsers.filter((user) => {
+        const matchesText =
+          !searchText ||
+          (user.name || "").toLowerCase().includes(searchText) ||
+          (user.email || "").toLowerCase().includes(searchText);
+
+        const matchesRole = !selectedRole || user.role === selectedRole;
+        return matchesText && matchesRole;
+      });
+
+      updateAdminUsersSummary(adminUsers);
+      body.innerHTML = "";
+
+      if (!filtered.length) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="5" class="px-6 py-10 text-center text-neutral-500">
+              No users found.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach((user) => {
+        const row = document.createElement("tr");
+        row.className = "border-b border-neutral-100";
+
+        const roleClass =
+          user.role === "admin"
+            ? "bg-rose-100 text-rose-700"
+            : user.role === "teacher"
+            ? "bg-indigo-100 text-indigo-700"
+            : "bg-emerald-100 text-emerald-700";
+
+        const statusClass =
+          user.status === "inactive"
+            ? "bg-neutral-100 text-neutral-700"
+            : "bg-emerald-100 text-emerald-700";
+
+        row.innerHTML = `
+          <td class="px-6 py-4">
+            <p class="font-semibold text-neutral-900">${user.name || "User"}</p>
+          </td>
+          <td class="px-6 py-4 text-neutral-700">${user.email || "—"}</td>
+          <td class="px-6 py-4">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold ${roleClass}">
+              ${user.role || "student"}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
+              ${user.status || "active"}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-neutral-700">${formatJoinDate(user.createdAt)}</td>
+        `;
+
+        body.appendChild(row);
+      });
+    }
+
+    async function loadAdminUsers() {
+      try {
+        const res = await fetch("/api/admin/users", {
+          credentials: "include"
+        });
+
+        adminUsers = res.ok ? await res.json() : [];
+        renderAdminUsers();
+      } catch (err) {
+        console.error("Error loading admin users:", err);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("adminUsersSearch").addEventListener("input", renderAdminUsers);
+      document.getElementById("adminUsersRoleFilter").addEventListener("change", renderAdminUsers);
+      loadAdminUsers();
+    });
+  </script>
+</body>
+</html>

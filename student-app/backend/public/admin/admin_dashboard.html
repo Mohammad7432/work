@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" style="height:auto; min-height:100%;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArNita Infotech - Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Poppins', 'sans-serif'],
+            body: ['Work Sans', 'sans-serif'],
+          },
+          borderRadius: {
+            small: '8px',
+            large: '16px',
+          },
+          boxShadow: {
+            custom: '0px 4px 24px 0px rgba(15, 23, 42, 0.08)',
+            'custom-hover': '0px 8px 40px 0px rgba(15, 23, 42, 0.14)',
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-body bg-gray-50 text-neutral-900 min-h-screen">
+
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/admin-dashboard" class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-indigo-600 rounded-small flex items-center justify-center">
+          <span class="text-white font-heading font-bold text-sm">AI</span>
+        </div>
+        <span class="font-heading font-bold text-xl text-neutral-900">ArNita Infotech</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/admin-dashboard" class="text-indigo-600 text-sm font-medium">Dashboard</a>
+        <a href="./admin_users.html" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Users</a>
+        <a href="./admin_content.html" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Content</a>
+        <a href="./admin_profile.html" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Profile</a>
+      </div>
+
+      <a href="/logout" class="text-sm font-medium text-neutral-700 hover:text-indigo-600">Logout</a>
+    </div>
+  </nav>
+
+  <section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="mb-8">
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-800 rounded-large shadow-custom-hover overflow-hidden">
+        <div class="px-8 py-8 md:px-10 md:py-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div>
+            <p class="text-indigo-200 text-sm font-semibold mb-2">Platform Control Center</p>
+            <h1 class="font-heading font-extrabold text-3xl md:text-4xl text-white">Admin Dashboard</h1>
+            <p class="text-indigo-100 mt-3 max-w-2xl">
+              Manage users, monitor course readiness, review content quality, and keep the platform organized.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 min-w-[280px]">
+            <div class="bg-white/10 backdrop-blur-sm rounded-large p-4 border border-white/10">
+              <p class="text-xs text-indigo-100">Students</p>
+              <p id="heroStudentsCount" class="font-heading font-bold text-2xl text-white mt-1">0</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-large p-4 border border-white/10">
+              <p class="text-xs text-indigo-100">Teachers</p>
+              <p id="heroTeachersCount" class="font-heading font-bold text-2xl text-white mt-1">0</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-large p-4 border border-white/10">
+              <p class="text-xs text-indigo-100">Courses</p>
+              <p id="heroCoursesCount" class="font-heading font-bold text-2xl text-white mt-1">0</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-large p-4 border border-white/10">
+              <p class="text-xs text-indigo-100">Certificates</p>
+              <p id="heroCertificatesCount" class="font-heading font-bold text-2xl text-white mt-1">0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Total Users</p>
+        <h2 id="totalUsersCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Published Courses</p>
+        <h2 id="publishedCoursesCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Draft Courses</p>
+        <h2 id="draftCoursesCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Content Alerts</p>
+        <h2 id="contentAlertsCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-heading font-bold text-xl text-neutral-900">Quick Actions</h2>
+          <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-small">Admin</span>
+        </div>
+
+        <div class="space-y-3">
+          <a href="./admin_users.html" class="block border border-neutral-200 hover:border-indigo-300 hover:bg-indigo-50 rounded-large p-4 transition-colors">
+            <p class="font-semibold text-neutral-900 text-sm">Manage Users</p>
+            <p class="text-xs text-neutral-500 mt-1">Review students, teachers, and admin accounts</p>
+          </a>
+
+          <a href="./admin_content.html" class="block border border-neutral-200 hover:border-amber-300 hover:bg-amber-50 rounded-large p-4 transition-colors">
+            <p class="font-semibold text-neutral-900 text-sm">Audit Content</p>
+            <p class="text-xs text-neutral-500 mt-1">Find missing modules, lessons, or quizzes</p>
+          </a>
+
+          <a href="/teacher-dashboard" class="block border border-neutral-200 hover:border-violet-300 hover:bg-violet-50 rounded-large p-4 transition-colors">
+            <p class="font-semibold text-neutral-900 text-sm">Open Content Builder</p>
+            <p class="text-xs text-neutral-500 mt-1">Jump into the teaching content workspace</p>
+          </a>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-large shadow-custom p-6 xl:col-span-2">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-heading font-bold text-xl text-neutral-900">Platform Health</h2>
+          <span class="text-xs text-neutral-500">Live overview</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="border border-neutral-200 rounded-large p-5">
+            <p class="text-sm text-neutral-500">Content Readiness</p>
+            <p id="readinessPercent" class="font-heading font-bold text-2xl text-neutral-900 mt-2">0%</p>
+            <div class="w-full h-2 bg-neutral-100 rounded-full mt-3 overflow-hidden">
+              <div id="readinessBar" class="h-full bg-indigo-600 rounded-full" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="border border-neutral-200 rounded-large p-5">
+            <p class="text-sm text-neutral-500">Published Ratio</p>
+            <p id="publishRatioPercent" class="font-heading font-bold text-2xl text-neutral-900 mt-2">0%</p>
+            <div class="w-full h-2 bg-neutral-100 rounded-full mt-3 overflow-hidden">
+              <div id="publishRatioBar" class="h-full bg-emerald-600 rounded-full" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="border border-neutral-200 rounded-large p-5">
+            <p class="text-sm text-neutral-500">Certificates Issued</p>
+            <p id="certificatesIssuedCount" class="font-heading font-bold text-2xl text-neutral-900 mt-2">0</p>
+            <p class="text-xs text-neutral-500 mt-3">Across all completed courses</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-heading font-bold text-xl text-neutral-900">Recent Users</h2>
+          <a href="./admin_users.html" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700">View All</a>
+        </div>
+        <div id="recentUsersList" class="space-y-3"></div>
+      </div>
+
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-heading font-bold text-xl text-neutral-900">Course Alerts</h2>
+          <a href="./admin_content.html" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700">Open Audit</a>
+        </div>
+        <div id="courseAlertsList" class="space-y-3"></div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let allUsers = [];
+    let auditItems = [];
+    let allCertificates = [];
+
+    function renderRecentUsers() {
+      const list = document.getElementById("recentUsersList");
+      list.innerHTML = "";
+
+      if (!allUsers.length) {
+        list.innerHTML = `<p class="text-sm text-neutral-500">No user data available yet.</p>`;
+        return;
+      }
+
+      const recent = [...allUsers]
+        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+        .slice(0, 5);
+
+      recent.forEach(user => {
+        const item = document.createElement("div");
+        item.className = "border border-neutral-200 rounded-large p-4 flex items-center justify-between gap-4";
+
+        const roleClass =
+          user.role === "admin"
+            ? "bg-rose-100 text-rose-700"
+            : user.role === "teacher"
+            ? "bg-indigo-100 text-indigo-700"
+            : "bg-emerald-100 text-emerald-700";
+
+        item.innerHTML = `
+          <div>
+            <p class="font-semibold text-neutral-900 text-sm">${user.name || "User"}</p>
+            <p class="text-xs text-neutral-500 mt-1">${user.email || "—"}</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold ${roleClass}">
+            ${user.role || "student"}
+          </span>
+        `;
+
+        list.appendChild(item);
+      });
+    }
+
+    function getAuditStatus(item) {
+      if (!item.published) return "draft";
+      if (!item.modulesCount || !item.lessonsCount || (item.modulesCount > item.quizzesCount)) {
+        return "needs_attention";
+      }
+      return "ready";
+    }
+
+    function renderCourseAlerts() {
+      const list = document.getElementById("courseAlertsList");
+      list.innerHTML = "";
+
+      const alerts = auditItems
+        .filter(item => getAuditStatus(item) !== "ready")
+        .slice(0, 5);
+
+      if (!alerts.length) {
+        list.innerHTML = `<p class="text-sm text-neutral-500">No urgent course alerts right now.</p>`;
+        return;
+      }
+
+      alerts.forEach(item => {
+        const status = getAuditStatus(item);
+        const statusLabel = status === "draft" ? "Draft" : "Needs Attention";
+        const statusClass =
+          status === "draft"
+            ? "bg-neutral-100 text-neutral-700"
+            : "bg-amber-100 text-amber-700";
+
+        const card = document.createElement("div");
+        card.className = "border border-neutral-200 rounded-large p-4";
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-4 mb-2">
+            <p class="font-semibold text-neutral-900 text-sm">${item.title || "Course"}</p>
+            <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
+              ${statusLabel}
+            </span>
+          </div>
+          <p class="text-xs text-neutral-500">
+            Modules: ${item.modulesCount || 0} · Lessons: ${item.lessonsCount || 0} · Quizzes: ${item.quizzesCount || 0}
+          </p>
+        `;
+
+        list.appendChild(card);
+      });
+    }
+
+    function refreshAdminSummary() {
+      const students = allUsers.filter(u => u.role === "student").length;
+      const teachers = allUsers.filter(u => u.role === "teacher").length;
+      const admins = allUsers.filter(u => u.role === "admin").length;
+      const totalUsers = allUsers.length;
+
+      const totalCourses = auditItems.length;
+      const publishedCourses = auditItems.filter(item => item.published).length;
+      const draftCourses = auditItems.filter(item => !item.published).length;
+      const alerts = auditItems.filter(item => getAuditStatus(item) !== "ready").length;
+
+      const readiness = totalCourses
+        ? Math.round((auditItems.filter(item => getAuditStatus(item) === "ready").length / totalCourses) * 100)
+        : 0;
+
+      const publishRatio = totalCourses
+        ? Math.round((publishedCourses / totalCourses) * 100)
+        : 0;
+
+      document.getElementById("heroStudentsCount").textContent = students;
+      document.getElementById("heroTeachersCount").textContent = teachers;
+      document.getElementById("heroCoursesCount").textContent = totalCourses;
+      document.getElementById("heroCertificatesCount").textContent = allCertificates.length;
+
+      document.getElementById("totalUsersCount").textContent = totalUsers;
+      document.getElementById("publishedCoursesCount").textContent = publishedCourses;
+      document.getElementById("draftCoursesCount").textContent = draftCourses;
+      document.getElementById("contentAlertsCount").textContent = alerts;
+
+      document.getElementById("readinessPercent").textContent = `${readiness}%`;
+      document.getElementById("publishRatioPercent").textContent = `${publishRatio}%`;
+      document.getElementById("certificatesIssuedCount").textContent = allCertificates.length;
+
+      document.getElementById("readinessBar").style.width = `${readiness}%`;
+      document.getElementById("publishRatioBar").style.width = `${publishRatio}%`;
+    }
+
+    async function loadAdminDashboard() {
+      try {
+        const [usersRes, auditRes, certRes] = await Promise.all([
+          fetch("/api/admin/users", { credentials: "include" }),
+          fetch("/api/admin/content-audit", { credentials: "include" }),
+          fetch("/api/certificate", { credentials: "include" }).catch(() => null)
+        ]);
+
+        allUsers = usersRes.ok ? await usersRes.json() : [];
+        auditItems = auditRes.ok ? await auditRes.json() : [];
+        allCertificates = certRes && certRes.ok ? await certRes.json() : [];
+
+        refreshAdminSummary();
+        renderRecentUsers();
+        renderCourseAlerts();
+      } catch (err) {
+        console.error("Error loading admin dashboard:", err);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadAdminDashboard);
+  </script>
+</body>
+</html>

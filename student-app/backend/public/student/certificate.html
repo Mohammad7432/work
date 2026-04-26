@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" style="height: auto; min-height: 100%;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArNita Infotech - Certificate</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    .certificate-stage {
+      position: relative;
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0px 8px 40px rgba(15, 23, 42, 0.14);
+    }
+
+    .certificate-image {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .certificate-name,
+    .certificate-course,
+    .certificate-date,
+    .certificate-id {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* CHANGE THESE POSITIONS TO MATCH YOUR TEMPLATE */
+    .certificate-name {
+      top: 46%;
+      font-family: "Great Vibes", cursive;
+      font-size: 3.2vw;
+      color: #1e293b;
+      font-weight: 400;
+      width: 80%;
+    }
+
+    .certificate-course {
+      top: 58%;
+      font-family: "Poppins", sans-serif;
+      font-size: 1.3vw;
+      color: #334155;
+      font-weight: 600;
+      width: 80%;
+    }
+
+    .certificate-date {
+      top: 73%;
+      left: 26%;
+      transform: translateX(-50%);
+      font-family: "Poppins", sans-serif;
+      font-size: 1vw;
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .certificate-id {
+      top: 73%;
+      left: 74%;
+      transform: translateX(-50%);
+      font-family: "Poppins", sans-serif;
+      font-size: 1vw;
+      color: #475569;
+      font-weight: 500;
+    }
+
+    @media (max-width: 900px) {
+      .certificate-name { font-size: 7vw; }
+      .certificate-course { font-size: 2.6vw; }
+      .certificate-date,
+      .certificate-id { font-size: 2vw; }
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+
+      #printArea, #printArea * {
+        visibility: visible;
+      }
+
+      #printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: none;
+        box-shadow: none;
+        border-radius: 0;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-neutral-900 min-h-screen font-['Poppins']">
+
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50 no-print">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/home" class="font-bold text-xl text-neutral-900">ArNita Infotech</a>
+      <div class="flex items-center gap-4">
+        <a href="/dashboard" class="text-sm text-neutral-600 hover:text-indigo-600">Dashboard</a>
+        <a href="/logout" class="text-sm text-neutral-600 hover:text-indigo-600">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="max-w-7xl mx-auto px-6 py-8">
+    <div class="mb-6 no-print">
+      <h1 class="text-3xl font-extrabold text-neutral-900">My Certificate</h1>
+      <p class="text-neutral-600 mt-2">Your certificate is generated automatically from your account details.</p>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-6 items-start">
+      <div id="printArea" class="certificate-stage flex-1">
+        <img
+          src="/assets/certificate-template.png"
+          alt="Certificate Template"
+          class="certificate-image"
+        />
+
+        <div id="studentName" class="certificate-name">Student Name</div>
+        <div id="courseTitle" class="certificate-course">Course Title</div>
+        <div id="issueDate" class="certificate-date">25 March 2026</div>
+        <div id="certificateId" class="certificate-id">ARN-000001</div>
+      </div>
+
+      <div class="w-full lg:w-80 bg-white rounded-2xl shadow p-6 no-print">
+        <h2 class="text-xl font-bold text-neutral-900 mb-4">Certificate Actions</h2>
+        <div class="space-y-3">
+          <a id="downloadCertificateBtn" href="#" class="w-full inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-3 rounded-lg">
+            Download Certificate PDF
+          </a>
+        </div>
+
+        <div class="mt-6 border-t border-neutral-200 pt-4 text-sm text-neutral-600 space-y-2">
+          <p><strong>Name:</strong> <span id="sideStudentName">-</span></p>
+          <p><strong>Course:</strong> <span id="sideCourseTitle">-</span></p>
+          <p><strong>Issued:</strong> <span id="sideIssueDate">-</span></p>
+          <p><strong>Certificate ID:</strong> <span id="sideCertificateId">-</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  async function loadCertificate() {
+    try {
+      const res = await fetch("/api/certificate", {
+        credentials: "include"
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to load certificate");
+      }
+
+      const certs = await res.json();
+
+      if (!Array.isArray(certs) || certs.length === 0) {
+        document.getElementById("studentName").textContent = "Certificate not available";
+        document.getElementById("courseTitle").textContent = "";
+        document.getElementById("issueDate").textContent = "";
+        document.getElementById("certificateId").textContent = "";
+
+        document.getElementById("sideStudentName").textContent = "Not available";
+        document.getElementById("sideCourseTitle").textContent = "Not available";
+        document.getElementById("sideIssueDate").textContent = "Not available";
+        document.getElementById("sideCertificateId").textContent = "Not available";
+
+        const downloadBtn = document.getElementById("downloadCertificateBtn");
+        if (downloadBtn) {
+          downloadBtn.classList.add("opacity-50", "pointer-events-none");
+          downloadBtn.removeAttribute("href");
+        }
+
+        return;
+      }
+
+      const cert = certs[0];
+
+      const studentName = cert.studentName || "Student Name";
+      const courseTitle = cert.courseTitle || "Course Title";
+      const certificateId = cert.certificateId || "ARN-000001";
+
+      const issuedDate = cert.issuedAt
+        ? new Date(cert.issuedAt).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+          })
+        : "25 March 2026";
+
+      const studentNameEl = document.getElementById("studentName");
+      const courseTitleEl = document.getElementById("courseTitle");
+      const issueDateEl = document.getElementById("issueDate");
+      const certificateIdEl = document.getElementById("certificateId");
+
+      if (studentNameEl) studentNameEl.textContent = studentName;
+      if (courseTitleEl) courseTitleEl.textContent = courseTitle;
+      if (issueDateEl) issueDateEl.textContent = issuedDate;
+      if (certificateIdEl) certificateIdEl.textContent = certificateId;
+
+      const sideStudentName = document.getElementById("sideStudentName");
+      const sideCourseTitle = document.getElementById("sideCourseTitle");
+      const sideIssueDate = document.getElementById("sideIssueDate");
+      const sideCertificateId = document.getElementById("sideCertificateId");
+
+      if (sideStudentName) sideStudentName.textContent = studentName;
+      if (sideCourseTitle) sideCourseTitle.textContent = courseTitle;
+      if (sideIssueDate) sideIssueDate.textContent = issuedDate;
+      if (sideCertificateId) sideCertificateId.textContent = certificateId;
+
+      const downloadBtn = document.getElementById("downloadCertificateBtn");
+      if (downloadBtn) {
+        if (cert.courseId) {
+          downloadBtn.href = `/api/certificate/download/${cert.courseId}`;
+          downloadBtn.classList.remove("opacity-50", "pointer-events-none");
+        } else {
+          downloadBtn.removeAttribute("href");
+          downloadBtn.classList.add("opacity-50", "pointer-events-none");
+        }
+      }
+    } catch (err) {
+      console.error("Error loading certificate:", err);
+
+      document.getElementById("studentName").textContent = "Unable to load certificate";
+      document.getElementById("courseTitle").textContent = "";
+      document.getElementById("issueDate").textContent = "";
+      document.getElementById("certificateId").textContent = "";
+
+      document.getElementById("sideStudentName").textContent = "Error";
+      document.getElementById("sideCourseTitle").textContent = "Error";
+      document.getElementById("sideIssueDate").textContent = "Error";
+      document.getElementById("sideCertificateId").textContent = "Error";
+
+      const downloadBtn = document.getElementById("downloadCertificateBtn");
+      if (downloadBtn) {
+        downloadBtn.removeAttribute("href");
+        downloadBtn.classList.add("opacity-50", "pointer-events-none");
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", loadCertificate);
+</script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" style="height:auto; min-height:100%;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArNita Infotech - Teacher Students</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Poppins', 'sans-serif'],
+            body: ['Work Sans', 'sans-serif'],
+          },
+          borderRadius: {
+            small: '8px',
+            large: '16px',
+          },
+          boxShadow: {
+            custom: '0px 4px 24px 0px rgba(15, 23, 42, 0.08)',
+            'custom-hover': '0px 8px 40px 0px rgba(15, 23, 42, 0.14)',
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-body bg-gray-50 text-neutral-900 min-h-screen">
+
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/teacher-dashboard" class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-indigo-600 rounded-small flex items-center justify-center">
+          <span class="text-white font-heading font-bold text-sm">AI</span>
+        </div>
+        <span class="font-heading font-bold text-xl text-neutral-900">ArNita Infotech</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/teacher-dashboard" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Dashboard</a>
+        <a href="./teacher_students.html" class="text-indigo-600 text-sm font-medium">Students</a>
+        <a href="./teacher_profile.html" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Profile</a>
+      </div>
+
+      <a href="/logout" class="text-sm font-medium text-neutral-700 hover:text-indigo-600">Logout</a>
+    </div>
+  </nav>
+
+  <section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="mb-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+      <div>
+        <p class="text-sm text-indigo-600 font-semibold mb-2">Teacher Monitoring</p>
+        <h1 class="font-heading font-extrabold text-3xl md:text-4xl text-neutral-900">Student Progress</h1>
+        <p class="text-neutral-600 mt-2">Track enrolled learners, quiz performance, final exam status, and certificate progress.</p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input
+          id="teacherStudentsSearch"
+          type="text"
+          placeholder="Search students..."
+          class="w-full sm:w-72 px-4 py-3 border border-neutral-300 rounded-small text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 bg-white"
+        />
+        <select
+          id="teacherStudentsCourseFilter"
+          class="w-full sm:w-64 px-4 py-3 border border-neutral-300 rounded-small text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 bg-white"
+        >
+          <option value="">All Courses</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Total Students</p>
+        <h2 id="studentsTotalCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Final Exam Unlocked</p>
+        <h2 id="studentsFinalUnlockedCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Final Exam Passed</p>
+        <h2 id="studentsFinalPassedCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Certificates Earned</p>
+        <h2 id="studentsCertificateCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-large shadow-custom overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-neutral-50 border-b border-neutral-200">
+            <tr>
+              <th class="text-left px-6 py-4 font-semibold text-neutral-700">Student</th>
+              <th class="text-left px-6 py-4 font-semibold text-neutral-700">Course</th>
+              <th class="text-left px-6 py-4 font-semibold text-neutral-700">Modules Passed</th>
+              <th class="text-left px-6 py-4 font-semibold text-neutral-700">Quiz Average</th>
+              <th class="text-left px-6 py-4 font-semibold text-neutral-700">Final Exam</th>
+              <th class="text-left px-6 py-4 font-semibold text-neutral-700">Certificate</th>
+            </tr>
+          </thead>
+          <tbody id="teacherStudentsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let teacherStudents = [];
+
+    function updateTeacherStudentsSummary(items) {
+      document.getElementById("studentsTotalCount").textContent = items.length;
+      document.getElementById("studentsFinalUnlockedCount").textContent = items.filter(i => i.finalExamUnlocked).length;
+      document.getElementById("studentsFinalPassedCount").textContent = items.filter(i => i.finalExamPassed).length;
+      document.getElementById("studentsCertificateCount").textContent = items.filter(i => i.certificateUnlocked).length;
+    }
+
+    function renderTeacherStudents() {
+      const searchText = (document.getElementById("teacherStudentsSearch").value || "").toLowerCase().trim();
+      const selectedCourse = document.getElementById("teacherStudentsCourseFilter").value;
+      const body = document.getElementById("teacherStudentsTableBody");
+
+      const filtered = teacherStudents.filter((item) => {
+        const matchesText =
+          !searchText ||
+          (item.studentName || "").toLowerCase().includes(searchText) ||
+          (item.studentEmail || "").toLowerCase().includes(searchText) ||
+          (item.courseTitle || "").toLowerCase().includes(searchText);
+
+        const matchesCourse = !selectedCourse || item.courseId === selectedCourse;
+        return matchesText && matchesCourse;
+      });
+
+      updateTeacherStudentsSummary(teacherStudents);
+      body.innerHTML = "";
+
+      if (!filtered.length) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-6 py-10 text-center text-neutral-500">
+              No students found.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach((item) => {
+        const row = document.createElement("tr");
+        row.className = "border-b border-neutral-100";
+
+        row.innerHTML = `
+          <td class="px-6 py-4">
+            <p class="font-semibold text-neutral-900">${item.studentName || "Student"}</p>
+            <p class="text-xs text-neutral-500 mt-1">${item.studentEmail || ""}</p>
+          </td>
+          <td class="px-6 py-4 text-neutral-700">${item.courseTitle || "Course"}</td>
+          <td class="px-6 py-4 text-neutral-700">${item.modulesPassed || 0}/${item.totalModules || 0}</td>
+          <td class="px-6 py-4 text-neutral-700">${item.quizAverage || 0}%</td>
+          <td class="px-6 py-4">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold ${
+              item.finalExamPassed
+                ? "bg-emerald-100 text-emerald-700"
+                : item.finalExamUnlocked
+                ? "bg-amber-100 text-amber-700"
+                : "bg-neutral-100 text-neutral-700"
+            }">
+              ${item.finalExamPassed ? "Passed" : item.finalExamUnlocked ? "Unlocked" : "Locked"}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold ${
+              item.certificateUnlocked
+                ? "bg-indigo-100 text-indigo-700"
+                : "bg-neutral-100 text-neutral-700"
+            }">
+              ${item.certificateUnlocked ? "Issued" : "Not Yet"}
+            </span>
+          </td>
+        `;
+
+        body.appendChild(row);
+      });
+    }
+
+    async function loadTeacherStudents() {
+      try {
+        const res = await fetch("/api/teacher/students-summary", {
+          credentials: "include"
+        });
+
+        teacherStudents = res.ok ? await res.json() : [];
+
+        const select = document.getElementById("teacherStudentsCourseFilter");
+        const courseMap = new Map();
+
+        teacherStudents.forEach((item) => {
+          if (!courseMap.has(item.courseId)) {
+            courseMap.set(item.courseId, item.courseTitle);
+          }
+        });
+
+        select.innerHTML = `<option value="">All Courses</option>`;
+        [...courseMap.entries()].forEach(([id, title]) => {
+          const option = document.createElement("option");
+          option.value = id;
+          option.textContent = title;
+          select.appendChild(option);
+        });
+
+        renderTeacherStudents();
+      } catch (err) {
+        console.error("Error loading teacher students:", err);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("teacherStudentsSearch").addEventListener("input", renderTeacherStudents);
+      document.getElementById("teacherStudentsCourseFilter").addEventListener("change", renderTeacherStudents);
+      loadTeacherStudents();
+    });
+  </script>
+</body>
+</html>

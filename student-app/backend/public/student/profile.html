@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" style="height: auto; min-height: 100%;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArNita Infotech - Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Poppins', 'sans-serif'],
+            body: ['Work Sans', 'sans-serif'],
+          },
+          borderRadius: {
+            small: '8px',
+            large: '16px',
+          },
+          boxShadow: {
+            custom: '0px 4px 24px 0px rgba(15, 23, 42, 0.08)',
+            'custom-hover': '0px 8px 40px 0px rgba(15, 23, 42, 0.14)',
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-body bg-gray-50 text-neutral-900 min-h-screen">
+
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/home" class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-indigo-600 rounded-small flex items-center justify-center">
+          <span class="text-white font-heading font-bold text-sm">AI</span>
+        </div>
+        <span class="font-heading font-bold text-xl text-neutral-900">ArNita Infotech</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/home" class="text-neutral-600 hover:text-indigo-600 font-medium text-sm">Home</a>
+        <a href="/dashboard" class="text-neutral-600 hover:text-indigo-600 font-medium text-sm">Dashboard</a>
+        <a href="/profile" class="text-indigo-600 font-medium text-sm">Profile</a>
+        <a href="/certificate" class="text-neutral-600 hover:text-indigo-600 font-medium text-sm">Certificates</a>
+      </div>
+      <a href="/logout" class="inline-flex text-neutral-700 font-medium text-sm px-4 py-2 rounded-small hover:bg-neutral-100 transition-colors">Logout</a>
+    </div>
+  </nav>
+
+  <section class="max-w-7xl mx-auto px-6 py-8">
+    <div class="mb-8">
+      <p class="text-sm text-indigo-600 font-semibold mb-2">Account Settings</p>
+      <h1 class="font-heading font-extrabold text-3xl md:text-4xl text-neutral-900">My Profile</h1>
+      <p class="text-neutral-600 mt-2">Manage your personal information, education details, and account settings.</p>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div class="bg-white rounded-large shadow-custom p-6 xl:col-span-1">
+        <div class="flex flex-col items-center text-center">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&h=160&fit=crop&crop=face" alt="Profile" class="w-28 h-28 rounded-full object-cover border-4 border-indigo-100 shadow-custom">
+          <h2 class="font-heading font-bold text-2xl text-neutral-900 mt-4">Student Name</h2>
+          <p class="text-sm text-neutral-500 mt-1">Student</p>
+          <p class="text-sm text-neutral-500">email@example.com</p>
+
+          <div class="w-full mt-6 space-y-3">
+            <div class="bg-neutral-50 rounded-large p-4 text-left">
+              <p class="text-xs text-neutral-500">Enrolled Courses</p>
+              <p id="profileCardCourses" class="font-semibold text-neutral-900 mt-1">0 Active Courses</p>
+            </div>
+            <div class="bg-neutral-50 rounded-large p-4 text-left">
+              <p class="text-xs text-neutral-500">Certificates</p>
+              <p id="profileCardCertificates" class="font-semibold text-neutral-900 mt-1">0 Earned</p>
+            </div>
+            <div class="bg-neutral-50 rounded-large p-4 text-left">
+              <p class="text-xs text-neutral-500">Member Since</p>
+              <p id="profileCardMemberSince" class="font-semibold text-neutral-900 mt-1">—</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-large shadow-custom p-6 xl:col-span-2">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h3 class="font-heading font-bold text-xl text-neutral-900">Edit Profile</h3>
+            <p class="text-sm text-neutral-500 mt-1">Keep your information updated</p>
+          </div>
+        </div>
+
+        <form class="space-y-6" onsubmit="saveProfile(event)">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">Full Name</label>
+              <input id="profileName" type="text" value="" class="w-full border border-neutral-300 rounded-small px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">Email Address</label>
+              <input id="profileEmail" type="email" value="" class="w-full border border-neutral-300 rounded-small px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">Phone Number</label>
+              <input id="profilePhone" type="text" value="" class="w-full border border-neutral-300 rounded-small px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">Role</label>
+              <input id="profileRole" type="text" value="" disabled class="w-full border border-neutral-200 bg-neutral-100 rounded-small px-4 py-3 text-neutral-500">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">URN / Student ID</label>
+              <input id="profileStudentId" type="text" value="" class="w-full border border-neutral-300 rounded-small px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">Course / Department</label>
+              <input id="profileDepartment" type="text" value="" class="w-full border border-neutral-300 rounded-small px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-neutral-700 mb-2">Bio</label>
+            <textarea id="profileBio" rows="4" class="w-full border border-neutral-300 rounded-small px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+          </div>
+
+          <div class="border-t border-neutral-200 pt-6 flex flex-col sm:flex-row gap-3">
+            <button type="submit" class="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-6 py-3 rounded-small transition-colors shadow-custom">
+              Save Changes
+            </button>
+            <button type="button" class="inline-flex items-center justify-center border border-neutral-300 hover:bg-neutral-50 text-neutral-700 font-semibold text-sm px-6 py-3 rounded-small transition-colors">
+              Cancel
+            </button>
+          </div>
+
+          <p id="saveMessage" class="hidden text-sm font-medium text-emerald-600">Profile updated successfully.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-neutral-900 mt-12">
+    <div class="max-w-7xl mx-auto px-6 py-10">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-9 h-9 bg-indigo-500 rounded-small flex items-center justify-center">
+          <span class="text-white font-heading font-bold text-sm">AI</span>
+        </div>
+        <span class="font-heading font-bold text-xl text-white">ArNita Infotech</span>
+      </div>
+      <p class="text-neutral-400 text-sm">Empowering learners worldwide with expert-led courses, interactive modules, and verified certificates.</p>
+    </div>
+  </footer>
+
+<script>
+  async function loadProfile() {
+    try {
+      const [profileRes, coursesRes, certRes] = await Promise.all([
+        fetch("/api/profile/me", { credentials: "include" }),
+        fetch("/api/student/my-courses", { credentials: "include" }),
+        fetch("/api/certificate", { credentials: "include" })
+      ]);
+
+      const profile = profileRes.ok ? await profileRes.json() : {};
+      const courses = coursesRes.ok ? await coursesRes.json() : [];
+      const certs = certRes.ok ? await certRes.json() : [];
+
+      document.getElementById("profileCardName").textContent = profile.name || "Student Name";
+      document.getElementById("profileCardRole").textContent = profile.role || "Student";
+      document.getElementById("profileCardEmail").textContent = profile.email || "email@example.com";
+      document.getElementById("profileCardCourses").textContent = `${courses.length} Active Courses`;
+      document.getElementById("profileCardCertificates").textContent = `${certs.length} Earned`;
+
+      if (profile.createdAt) {
+        const dt = new Date(profile.createdAt);
+        document.getElementById("profileCardMemberSince").textContent = dt.toLocaleDateString("en-IN", {
+          month: "long",
+          year: "numeric"
+        });
+      }
+
+      document.getElementById("profileName").value = profile.name || "";
+      document.getElementById("profileEmail").value = profile.email || "";
+      document.getElementById("profilePhone").value = profile.phone || "";
+      document.getElementById("profileRole").value = profile.role || "Student";
+      document.getElementById("profileStudentId").value = profile.studentId || "";
+      document.getElementById("profileDepartment").value = profile.department || "";
+      document.getElementById("profileBio").value = profile.bio || "";
+    } catch (err) {
+      console.error("Error loading profile:", err);
+    }
+  }
+
+  async function saveProfile(event) {
+    event.preventDefault();
+
+    try {
+      const res = await fetch("/api/profile/me", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          name: document.getElementById("profileName").value,
+          email: document.getElementById("profileEmail").value,
+          phone: document.getElementById("profilePhone").value,
+          studentId: document.getElementById("profileStudentId").value,
+          department: document.getElementById("profileDepartment").value,
+          bio: document.getElementById("profileBio").value
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update profile");
+      }
+
+      const msg = document.getElementById("saveMessage");
+      msg.textContent = "Profile updated successfully.";
+      msg.classList.remove("hidden");
+
+      setTimeout(() => {
+        msg.classList.add("hidden");
+      }, 2500);
+
+      loadProfile();
+    } catch (err) {
+      console.error("Error saving profile:", err);
+      const msg = document.getElementById("saveMessage");
+      msg.textContent = "Unable to update profile right now.";
+      msg.classList.remove("hidden");
+      msg.classList.remove("text-emerald-600");
+      msg.classList.add("text-rose-600");
+
+      setTimeout(() => {
+        msg.classList.add("hidden");
+        msg.classList.remove("text-rose-600");
+        msg.classList.add("text-emerald-600");
+      }, 2500);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", loadProfile);
+</script>
+
+</body>
+</html>

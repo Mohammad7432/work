@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" style="height:auto; min-height:100%;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArNita Infotech - Teacher Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Poppins', 'sans-serif'],
+            body: ['Work Sans', 'sans-serif'],
+          },
+          borderRadius: {
+            small: '8px',
+            large: '16px',
+          },
+          boxShadow: {
+            custom: '0px 4px 24px 0px rgba(15, 23, 42, 0.08)',
+            'custom-hover': '0px 8px 40px 0px rgba(15, 23, 42, 0.14)',
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-body bg-gray-50 text-neutral-900 min-h-screen">
+
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/teacher-dashboard" class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-indigo-600 rounded-small flex items-center justify-center">
+          <span class="text-white font-heading font-bold text-sm">AI</span>
+        </div>
+        <span class="font-heading font-bold text-xl text-neutral-900">ArNita Infotech</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/teacher-dashboard" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Dashboard</a>
+        <a href="./teacher_students.html" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Students</a>
+        <a href="./teacher_profile.html" class="text-indigo-600 text-sm font-medium">Profile</a>
+      </div>
+
+      <a href="/logout" class="text-sm font-medium text-neutral-700 hover:text-indigo-600">Logout</a>
+    </div>
+  </nav>
+
+  <section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="mb-8">
+      <p class="text-sm text-indigo-600 font-semibold mb-2">Teacher Account</p>
+      <h1 class="font-heading font-extrabold text-3xl md:text-4xl text-neutral-900">Teacher Profile</h1>
+      <p class="text-neutral-600 mt-2">Manage your teaching information, expertise, and contact details.</p>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div class="bg-white rounded-large shadow-custom p-6 xl:col-span-1">
+        <div class="flex flex-col items-center text-center">
+          <div class="w-28 h-28 rounded-full bg-indigo-100 flex items-center justify-center text-3xl font-heading font-bold text-indigo-600 shadow-custom">
+            T
+          </div>
+
+          <h2 id="teacherNameCard" class="font-heading font-bold text-2xl text-neutral-900 mt-4">Teacher Name</h2>
+          <p id="teacherRoleCard" class="text-sm text-neutral-500 mt-1">Teacher</p>
+
+          <div class="grid grid-cols-2 gap-3 w-full mt-6">
+            <div class="bg-neutral-50 rounded-large p-4 text-left">
+              <p class="text-xs text-neutral-500">Courses Managed</p>
+              <p id="teacherCoursesCount" class="font-semibold text-neutral-900 mt-1">0</p>
+            </div>
+            <div class="bg-neutral-50 rounded-large p-4 text-left">
+              <p class="text-xs text-neutral-500">Students</p>
+              <p id="teacherStudentsCount" class="font-semibold text-neutral-900 mt-1">0</p>
+            </div>
+          </div>
+
+          <div class="w-full mt-6 border-t border-neutral-200 pt-5 text-left space-y-3">
+            <div>
+              <p class="text-xs text-neutral-500">Specialization</p>
+              <p id="teacherSpecializationCard" class="text-sm font-semibold text-neutral-900 mt-1">Not added</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral-500">Experience</p>
+              <p id="teacherExperienceCard" class="text-sm font-semibold text-neutral-900 mt-1">Not added</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral-500">Department</p>
+              <p id="teacherDepartmentCard" class="text-sm font-semibold text-neutral-900 mt-1">Not added</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-large shadow-custom p-6 xl:col-span-2">
+        <h2 class="font-heading font-bold text-xl text-neutral-900 mb-5">Profile Details</h2>
+
+        <form id="teacherProfileForm" class="space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">Full Name</label>
+              <input
+                id="teacherName"
+                type="text"
+                class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
+                placeholder="Enter full name"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">Email</label>
+              <input
+                id="teacherEmail"
+                type="email"
+                class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm bg-neutral-50 text-neutral-500"
+                placeholder="Enter email"
+                readonly
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">Department</label>
+              <input
+                id="teacherDepartment"
+                type="text"
+                class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
+                placeholder="e.g. Data Science"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">Experience</label>
+              <input
+                id="teacherExperience"
+                type="text"
+                class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
+                placeholder="e.g. 5 Years"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">Specialization</label>
+              <input
+                id="teacherSpecialization"
+                type="text"
+                class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
+                placeholder="e.g. AI, ML, Python"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-2">Phone</label>
+              <input
+                id="teacherPhone"
+                type="text"
+                class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
+                placeholder="Enter phone number"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-neutral-700 mb-2">Bio</label>
+            <textarea
+              id="teacherBio"
+              rows="5"
+              class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
+              placeholder="Write a short teaching bio..."
+            ></textarea>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <button
+              type="submit"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-6 py-3 rounded-small transition-colors"
+            >
+              Save Profile
+            </button>
+
+            <button
+              type="button"
+              onclick="loadTeacherProfile()"
+              class="border border-neutral-300 hover:bg-neutral-50 text-neutral-700 font-semibold text-sm px-6 py-3 rounded-small transition-colors"
+            >
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    async function loadTeacherProfile() {
+      try {
+        const res = await fetch("/api/profile/me", {
+          credentials: "include"
+        });
+
+        if (!res.ok) return;
+        const data = await res.json();
+
+        document.getElementById("teacherNameCard").textContent = data.name || "Teacher Name";
+        document.getElementById("teacherRoleCard").textContent = data.role || "Teacher";
+        document.getElementById("teacherSpecializationCard").textContent = data.specialization || "Not added";
+        document.getElementById("teacherExperienceCard").textContent = data.experience || "Not added";
+        document.getElementById("teacherDepartmentCard").textContent = data.department || "Not added";
+
+        document.getElementById("teacherName").value = data.name || "";
+        document.getElementById("teacherEmail").value = data.email || "";
+        document.getElementById("teacherDepartment").value = data.department || "";
+        document.getElementById("teacherExperience").value = data.experience || "";
+        document.getElementById("teacherSpecialization").value = data.specialization || "";
+        document.getElementById("teacherPhone").value = data.phone || "";
+        document.getElementById("teacherBio").value = data.bio || "";
+
+        if (typeof data.coursesManaged !== "undefined") {
+          document.getElementById("teacherCoursesCount").textContent = data.coursesManaged;
+        }
+
+        if (typeof data.studentsCount !== "undefined") {
+          document.getElementById("teacherStudentsCount").textContent = data.studentsCount;
+        }
+      } catch (err) {
+        console.error("Error loading teacher profile:", err);
+      }
+    }
+
+    document.getElementById("teacherProfileForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      try {
+        await fetch("/api/profile/me", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            name: document.getElementById("teacherName").value,
+            department: document.getElementById("teacherDepartment").value,
+            experience: document.getElementById("teacherExperience").value,
+            specialization: document.getElementById("teacherSpecialization").value,
+            phone: document.getElementById("teacherPhone").value,
+            bio: document.getElementById("teacherBio").value
+          })
+        });
+
+        alert("Profile updated successfully");
+        loadTeacherProfile();
+      } catch (err) {
+        console.error("Error updating teacher profile:", err);
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", loadTeacherProfile);
+  </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" style="height:auto; min-height:100%;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArNita Infotech - My Courses</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Poppins', 'sans-serif'],
+            body: ['Work Sans', 'sans-serif'],
+          },
+          borderRadius: {
+            small: '8px',
+            large: '16px',
+          },
+          boxShadow: {
+            custom: '0px 4px 24px 0px rgba(15, 23, 42, 0.08)',
+            'custom-hover': '0px 8px 40px 0px rgba(15, 23, 42, 0.14)',
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-body bg-gray-50 text-neutral-900 min-h-screen">
+
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/home" class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-indigo-600 rounded-small flex items-center justify-center">
+          <span class="text-white font-heading font-bold text-sm">AI</span>
+        </div>
+        <span class="font-heading font-bold text-xl text-neutral-900">ArNita Infotech</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/home" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Home</a>
+        <a href="/courses" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Courses</a>
+        <a href="/dashboard" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Dashboard</a>
+        <a href="/my-courses" class="text-indigo-600 text-sm font-medium">My Courses</a>
+        <a href="/certificate" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Certificates</a>
+        <a href="/profile" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Profile</a>
+      </div>
+
+      <a href="/logout" class="text-sm font-medium text-neutral-700 hover:text-indigo-600">Logout</a>
+    </div>
+  </nav>
+
+  <section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="mb-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+      <div>
+        <p class="text-sm font-semibold text-indigo-600 mb-2">Student Learning Area</p>
+        <h1 class="font-heading font-extrabold text-3xl md:text-4xl text-neutral-900">My Courses</h1>
+        <p class="text-neutral-600 mt-2">Track enrolled courses, module progress, final exam unlock, and certificates.</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <input
+          id="myCoursesSearch"
+          type="text"
+          placeholder="Search enrolled courses..."
+          class="w-full lg:w-72 px-4 py-3 border border-neutral-300 rounded-small text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 bg-white"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Enrolled Courses</p>
+        <h2 id="enrolledCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Modules Passed</p>
+        <h2 id="passedModulesCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Final Exam Unlocked</p>
+        <h2 id="finalUnlockedCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Certificates Earned</p>
+        <h2 id="certCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-large shadow-custom p-6 mb-8">
+      <div class="flex flex-wrap gap-2" id="courseStatusFilters">
+        <button data-status="all" class="status-filter-btn px-4 py-2 rounded-small bg-indigo-600 text-white text-sm font-semibold">All</button>
+        <button data-status="active" class="status-filter-btn px-4 py-2 rounded-small border border-neutral-300 text-neutral-700 text-sm font-medium">Active</button>
+        <button data-status="final_unlocked" class="status-filter-btn px-4 py-2 rounded-small border border-neutral-300 text-neutral-700 text-sm font-medium">Final Exam Unlocked</button>
+        <button data-status="completed" class="status-filter-btn px-4 py-2 rounded-small border border-neutral-300 text-neutral-700 text-sm font-medium">Completed</button>
+      </div>
+    </div>
+
+    <div id="myCoursesGrid" class="grid grid-cols-1 xl:grid-cols-2 gap-6"></div>
+  </section>
+
+  <script>
+    let allMyCourses = [];
+    let selectedStatus = "all";
+
+    function setStatusButtonActive(value) {
+      document.querySelectorAll(".status-filter-btn").forEach(btn => {
+        if (btn.dataset.status === value) {
+          btn.className = "status-filter-btn px-4 py-2 rounded-small bg-indigo-600 text-white text-sm font-semibold";
+        } else {
+          btn.className = "status-filter-btn px-4 py-2 rounded-small border border-neutral-300 text-neutral-700 text-sm font-medium";
+        }
+      });
+    }
+
+    function getCourseStatus(item) {
+      if (item.hasCertificate) return "completed";
+      if (item.progress?.finalExamUnlocked) return "final_unlocked";
+      return "active";
+    }
+
+    function updateSummary(items) {
+      document.getElementById("enrolledCount").textContent = items.length;
+      document.getElementById("passedModulesCount").textContent =
+        items.reduce((sum, item) => sum + (item.progress?.modules?.filter(m => m.quizPassed).length || 0), 0);
+      document.getElementById("finalUnlockedCount").textContent =
+        items.filter(item => item.progress?.finalExamUnlocked).length;
+      document.getElementById("certCount").textContent =
+        items.filter(item => item.hasCertificate).length;
+    }
+
+    function renderMyCourses() {
+      const q = (document.getElementById("myCoursesSearch").value || "").toLowerCase().trim();
+      const grid = document.getElementById("myCoursesGrid");
+
+      const items = allMyCourses.filter(item => {
+        const matchesText =
+          !q ||
+          item.course.title.toLowerCase().includes(q) ||
+          (item.course.category || "").toLowerCase().includes(q);
+
+        const status = getCourseStatus(item);
+        const matchesStatus = selectedStatus === "all" || status === selectedStatus;
+
+        return matchesText && matchesStatus;
+      });
+
+      updateSummary(allMyCourses);
+      grid.innerHTML = "";
+
+      if (!items.length) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-large shadow-custom p-10 text-center">
+            <h3 class="font-heading font-semibold text-xl text-neutral-900 mb-2">No courses found</h3>
+            <p class="text-neutral-500">Try another search or filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      items.forEach(item => {
+        const progress = item.progress || {};
+        const moduleCount = progress.modules?.length || item.modulesCount || 0;
+        const passedCount = progress.modules?.filter(m => m.quizPassed).length || 0;
+        const overallPercent = moduleCount ? Math.round((passedCount / moduleCount) * 100) : 0;
+
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-large shadow-custom overflow-hidden";
+
+        card.innerHTML = `
+          <div class="h-52 overflow-hidden">
+            <img src="${item.course.thumbnail || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=600&fit=crop'}" class="w-full h-full object-cover" alt="${item.course.title}">
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 flex-wrap mb-3">
+              <span class="bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-small">${item.course.category || 'General'}</span>
+              <span class="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-small">${item.course.level || 'Beginner'}</span>
+              <span class="bg-neutral-100 text-neutral-700 text-xs font-semibold px-2.5 py-1 rounded-small">${getCourseStatus(item).replace('_', ' ')}</span>
+            </div>
+            <h3 class="font-heading font-bold text-xl text-neutral-900 mb-2">${item.course.title}</h3>
+            <p class="text-sm text-neutral-500 mb-4">By ${item.course.teacherName || 'ArNita Faculty'} · ${item.course.duration || 'Self-paced'}</p>
+            <div class="mb-4">
+              <div class="flex items-center justify-between text-sm mb-2">
+                <span class="text-neutral-600">Progress</span>
+                <span class="font-semibold text-neutral-900">${overallPercent}%</span>
+              </div>
+              <div class="w-full h-2.5 bg-neutral-100 rounded-full overflow-hidden">
+                <div class="h-full bg-indigo-600 rounded-full" style="width:${overallPercent}%"></div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-5">
+              <div class="border border-neutral-200 rounded-large p-3">
+                <p class="text-xs text-neutral-500">Modules Passed</p>
+                <p class="font-semibold text-neutral-900 mt-1">${passedCount}/${moduleCount}</p>
+              </div>
+              <div class="border border-neutral-200 rounded-large p-3">
+                <p class="text-xs text-neutral-500">Final Exam</p>
+                <p class="font-semibold ${progress.finalExamUnlocked ? 'text-emerald-600' : 'text-neutral-900'} mt-1">
+                  ${progress.finalExamUnlocked ? 'Unlocked' : 'Locked'}
+                </p>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <a href="/course-detail?slug=${item.course.slug}" class="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-5 py-3 rounded-small transition-colors">
+                Continue Course
+              </a>
+              <a href="/final-exam?courseId=${item.course._id}" class="inline-flex items-center justify-center border border-neutral-300 hover:bg-neutral-50 text-neutral-700 font-semibold text-sm px-5 py-3 rounded-small transition-colors ${progress.finalExamUnlocked ? '' : 'opacity-50 pointer-events-none'}">
+                Final Exam
+              </a>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    async function loadMyCourses() {
+      try {
+        const [coursesRes, certRes] = await Promise.all([
+          fetch("/api/student/my-courses", { credentials: "include" }),
+          fetch("/api/certificate", { credentials: "include" })
+        ]);
+
+        const courses = coursesRes.ok ? await coursesRes.json() : [];
+        const certs = certRes.ok ? await certRes.json() : [];
+
+        allMyCourses = courses.map(item => ({
+          ...item,
+          hasCertificate: certs.some(c => c.courseId === item.course._id || c.courseId?._id === item.course._id)
+        }));
+
+        renderMyCourses();
+      } catch (err) {
+        console.error("Error loading my courses:", err);
+        document.getElementById("myCoursesGrid").innerHTML = `
+          <div class="col-span-full bg-white rounded-large shadow-custom p-10 text-center">
+            <h3 class="font-heading font-semibold text-xl text-neutral-900 mb-2">Unable to load your courses</h3>
+            <p class="text-neutral-500">Please try again in a moment.</p>
+          </div>
+        `;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("myCoursesSearch").addEventListener("input", renderMyCourses);
+
+      document.querySelectorAll(".status-filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedStatus = btn.dataset.status;
+          setStatusButtonActive(selectedStatus);
+          renderMyCourses();
+        });
+      });
+
+      loadMyCourses();
+    });
+  </script>
+</body>
+</html>

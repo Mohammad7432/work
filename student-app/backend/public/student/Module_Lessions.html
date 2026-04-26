@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en" style="height: auto; min-height: 100%;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArNita Infotech - Module Lesson</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link id="heading-font-link" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link id="body-font-link" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['var(--font-heading-name)', 'sans-serif'],
+            body: ['var(--font-body-name)', 'sans-serif'],
+          },
+          spacing: {
+            base: 'var(--space-base)',
+          },
+          borderRadius: {
+            small: 'var(--radius-small)',
+            large: 'var(--radius-large)',
+          },
+          boxShadow: {
+            custom: 'var(--shadow-custom)',
+            'custom-hover': 'var(--shadow-custom-hover)',
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --font-heading-name: 'Poppins';
+      --font-body-name: 'Work Sans';
+      --font-heading: 'Poppins', sans-serif;
+      --font-body: 'Work Sans', sans-serif;
+      --letter-spacing-heading: -0.5px;
+      --letter-spacing-body: 0px;
+
+      --space-base: 1rem;
+
+      --radius-small: 8px;
+      --radius-large: 16px;
+      --border-width: 1.5px;
+
+      --shadow-color: 15 23 42;
+      --shadow-offset-x: 0px;
+      --shadow-offset-y: 4px;
+      --shadow-blur: 24px;
+      --shadow-spread: 0px;
+      --shadow-opacity: 0.08;
+      --shadow-custom: 0px 4px 24px 0px rgba(15, 23, 42, 0.08);
+      --shadow-custom-hover: 0px 8px 40px 0px rgba(15, 23, 42, 0.14);
+    }
+  </style>
+</head>
+<body class="font-body bg-gray-50 text-neutral-900" style="height: auto; min-height: 100%;">
+
+  <!-- Top Navigation Bar -->
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <div class="px-4 py-3 flex items-center justify-between gap-4">
+      <!-- Left: Logo + Course Title -->
+      <div class="flex items-center gap-3 min-w-0">
+        <a href="/home" class="flex items-center gap-2 flex-shrink-0">
+          <div class="w-8 h-8 bg-indigo-600 rounded-small flex items-center justify-center">
+            <span class="text-white font-heading font-bold text-xs">AI</span>
+          </div>
+          <span class="font-heading font-bold text-base text-neutral-900 tracking-tight hidden sm:block">ArNita Infotech</span>
+        </a>
+        <span class="text-neutral-300 hidden sm:block">›</span>
+        <a id="navCourseTitle" href="/courses" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium transition-colors truncate hidden md:block max-w-xs"></a>
+        <span class="text-neutral-300 hidden md:block">›</span>
+        <span id="navModuleTitle" class="text-neutral-800 text-sm font-semibold truncate hidden md:block"></span>
+      </div>
+      <!-- Center: Progress -->
+      <div class="hidden lg:flex items-center gap-3 flex-1 max-w-xs mx-4">
+        <div class="flex-1 bg-neutral-100 rounded-full h-2">
+          <div id="lessonProgressBar" class="bg-indigo-600 h-2 rounded-full" style="width: 0%"></div>
+        </div>
+        <span id="lessonProgressText" class="text-xs font-semibold text-indigo-600 whitespace-nowrap">0/0 lessons</span>
+      </div>
+      <!-- Right: Nav Links -->
+      <div class="flex items-center gap-2">
+        <a href="/dashboard" class="hidden sm:inline-flex text-neutral-600 hover:text-indigo-600 font-medium text-sm px-3 py-1.5 rounded-small hover:bg-neutral-100 transition-colors">Dashboard</a>
+        <a href="/profile" class="flex items-center gap-2 hover:bg-neutral-100 rounded-small px-2 py-1.5 transition-colors">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&fit=crop&crop=face" alt="Profile" class="w-7 h-7 rounded-full object-cover border-2 border-indigo-200">
+          <span id="lessonUserName" class="text-sm font-medium text-neutral-700 hidden sm:block">Student</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Layout: Sidebar + Content -->
+  <div class="flex" style="height: auto; min-height: 100%;">
+
+    <!-- Main Content Area -->
+    <main class="flex-1 min-w-0 flex flex-col">
+
+      <!-- Lesson Header Bar -->
+      <div class="bg-white border-b border-neutral-200 px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3 min-w-0">
+          <span id="lessonModuleBadge" class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-small flex-shrink-0">Module</span>
+          <h1 id="lessonTitle" class="font-heading font-bold text-sm text-neutral-900"></h1>
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0 ml-4">
+          <a id="backToCourseLink" href="/courses" class="text-sm text-neutral-600 hover:text-indigo-600 font-medium">
+            Back to Course
+          </a>
+        </div>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="flex-1 overflow-y-auto">
+
+        <!-- Video Player Section -->
+        <section class="bg-neutral-900">
+          <div class="max-w-4xl mx-auto px-6 py-6">
+            <!-- Video Container -->
+            <div class="relative bg-neutral-800 rounded-large overflow-hidden shadow-custom-hover" style="aspect-ratio: 16/9; max-height: 420px;">
+              <iframe id="lessonVideo"
+                class="w-full h-full"
+                frameborder="0"
+                allowfullscreen>
+              </iframe>
+              <!-- Play Button Overlay -->
+              <!-- Video Progress Bar -->
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-neutral-900 to-transparent px-4 pb-3 pt-8">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="text-white text-xs font-medium">8:42</span>
+                  <div class="flex-1 bg-neutral-600 rounded-full h-1.5 cursor-pointer relative">
+                    <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 39%"></div>
+                    <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-custom border-2 border-indigo-500" style="left: 39%; transform: translate(-50%, -50%);"></div>
+                  </div>
+                  <span class="text-neutral-400 text-xs">22:15</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <button class="text-white hover:text-indigo-300 transition-colors">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <button class="text-white hover:text-indigo-300 transition-colors">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <button class="text-white hover:text-indigo-300 transition-colors">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                    <div class="flex items-center gap-1.5">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M12 6a7 7 0 010 12M8.464 8.464a5 5 0 000 7.072"/></svg>
+                      <div class="w-16 bg-neutral-600 rounded-full h-1 cursor-pointer">
+                        <div class="bg-white h-1 rounded-full" style="width: 75%"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <button class="text-neutral-300 hover:text-white text-xs font-medium transition-colors">1x</button>
+                    <button class="text-neutral-300 hover:text-white transition-colors">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Content Area -->
+        <div class="max-w-4xl mx-auto px-6 py-8">
+
+          <!-- Lesson Info Row -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span id="lessonTag" class="bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-small">Lesson</span>
+                <span class="flex items-center gap-1 text-xs text-neutral-500">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  <span id="lessonDuration">Self-paced</span>
+                </span>
+                <span class="flex items-center gap-1 text-xs text-neutral-500">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Video Lesson
+                </span>
+              </div>
+              <h2 id="lessonHeading" class="font-heading font-bold text-2xl text-neutral-900" style="letter-spacing: var(--letter-spacing-heading);"></h2>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <button disabled class="flex items-center gap-1.5 text-neutral-400 text-sm font-medium border border-neutral-200 px-3 py-2 rounded-small cursor-not-allowed">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+                Bookmark
+              </button>
+              <button onclick="markComplete()" id="completeBtn" class="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-small transition-colors shadow-custom">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Go to Module Quiz
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabs: Overview / Notes / Resources -->
+          <div class="border-b border-neutral-200 mb-6">
+            <div class="flex gap-0">
+              <button onclick="switchTab('overview')" id="tab-overview" class="px-5 py-3 text-sm font-semibold text-indigo-600 border-b-2 border-indigo-600 transition-colors">Overview</button>
+              <button onclick="switchTab('notes')" id="tab-notes" class="px-5 py-3 text-sm font-medium text-neutral-500 hover:text-neutral-700 border-b-2 border-transparent hover:border-neutral-300 transition-colors">My Notes</button>
+              <button onclick="switchTab('resources')" id="tab-resources" class="px-5 py-3 text-sm font-medium text-neutral-500 hover:text-neutral-700 border-b-2 border-transparent hover:border-neutral-300 transition-colors">Resources</button>
+            </div>
+          </div>
+
+          <!-- Tab: Overview -->
+          <div id="content-overview" class="bg-white rounded-large shadow-custom p-6">
+            <div id="lessonContent"></div>
+          </div>
+
+          <!-- Tab: Notes (hidden by default) -->
+          <div id="content-notes" class="hidden">
+            <div class="bg-white rounded-large shadow-custom p-6 mb-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-heading font-semibold text-base text-neutral-900" style="letter-spacing: var(--letter-spacing-heading);">My Lesson Notes</h3>
+                <span id="noteSaveStatus" class="text-xs text-neutral-400">Not saved</span>
+              </div>
+
+              <div class="border border-neutral-200 rounded-large overflow-hidden">
+                <textarea id="studentNoteInput" class="w-full px-4 py-3 text-sm text-neutral-700 placeholder-neutral-400 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white" rows="10" placeholder="Write your private lesson notes here..."></textarea>
+                <div class="flex items-center justify-end px-4 py-2.5 bg-neutral-50 border-t border-neutral-200">
+                  <button onclick="saveStudentNote()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-small transition-colors">Save Note</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: Resources (hidden by default) -->
+          <div id="content-resources" class="hidden">
+            <div class="bg-white rounded-large shadow-custom p-6 mb-6">
+              <h3 class="font-heading font-semibold text-base text-neutral-900 mb-4" style="letter-spacing: var(--letter-spacing-heading);">Lesson Resources</h3>
+              <div id="resourcesList" class="space-y-3"></div>
+            </div>
+          </div>
+
+          <!-- ===== TAKE MODULE TEST BANNER ===== -->
+          <!-- This appears when all lessons in the module are completed -->
+          <div id="moduleQuizBanner" class="hidden bg-gradient-to-r from-violet-600 to-indigo-600 rounded-large p-6 mb-6 shadow-custom-hover">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-large flex items-center justify-center flex-shrink-0">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="bg-white bg-opacity-20 text-white text-xs font-bold px-2 py-0.5 rounded-small">All Lessons Complete!</span>
+                  </div>
+                  <h3 class="font-heading font-bold text-lg text-white" style="letter-spacing: var(--letter-spacing-heading);">Ready to Take the Module Test?</h3>
+                  <p class="text-indigo-200 text-sm mt-1">You’ve completed the lessons in this module. Test your knowledge with the module quiz.</p>
+                </div>
+              </div>
+              <a id="takeModuleQuizLink" href="/module-quiz" class="flex-shrink-0 inline-flex items-center gap-2 bg-white text-indigo-700 hover:bg-indigo-50 font-bold text-sm px-6 py-3 rounded-small transition-colors shadow-custom">
+                Take Module Test
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </a>
+            </div>
+            <!-- Progress Dots -->
+             <div class="flex items-center gap-1.5 mt-4 ml-4">
+              <div class="flex gap-1">
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+                <span class="w-2 h-2 bg-white rounded-full opacity-100"></span>
+              </div>
+              <span id="moduleQuizProgressText" class="text-indigo-200 text-xs ml-1">Module complete</span>
+            </div>
+          </div>
+
+          <!-- Lesson Navigation Footer -->
+          <div class="flex items-center justify-between gap-4 mb-8">
+            <a id="prevLessonLink" href="#" class="flex items-center gap-2 border border-neutral-200 hover:border-indigo-300 hover:bg-indigo-50 text-neutral-700 hover:text-indigo-700 font-medium text-sm px-5 py-3 rounded-small transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+              <span id="prevLessonText">Previous Lesson</span>
+            </a>
+            <a id="nextLessonLink" href="#" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-5 py-3 rounded-small transition-colors shadow-custom">
+              <span id="nextLessonText">Next Lesson</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-neutral-900">
+    <div class="max-w-7xl mx-auto px-6 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div class="col-span-1 md:col-span-2">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-9 h-9 bg-indigo-500 rounded-small flex items-center justify-center">
+              <span class="text-white font-heading font-bold text-sm">AI</span>
+            </div>
+            <span class="font-heading font-bold text-xl text-white">ArNita Infotech</span>
+          </div>
+          <p class="text-neutral-400 text-sm leading-relaxed max-w-xs">Empowering learners worldwide with expert-led courses, interactive modules, and verified certificates.</p>
+        </div>
+        <div>
+          <h4 class="font-heading font-semibold text-white text-sm mb-4">Platform</h4>
+          <ul class="space-y-2.5">
+            <li><a href="/courses" class="text-neutral-400 hover:text-white text-sm transition-colors">Course Catalog</a></li>
+            <li><a href="/courses" class="text-neutral-400 hover:text-white text-sm transition-colors">Browse Courses</a></li>
+            <li><a href="/lesson" class="text-neutral-400 hover:text-white text-sm transition-colors">Module Lessons</a></li>
+            <li><a href="/module-quiz" class="text-neutral-400 hover:text-white text-sm transition-colors">Module Quizzes</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-heading font-semibold text-white text-sm mb-4">Account</h4>
+          <ul class="space-y-2.5">
+            <li><a href="/dashboard" class="text-neutral-400 hover:text-white text-sm transition-colors">Dashboard</a></li>
+            <li><a href="/profile" class="text-neutral-400 hover:text-white text-sm transition-colors">Profile</a></li>
+            <li><a href="/final-exam" class="text-neutral-400 hover:text-white text-sm transition-colors">Final Exam</a></li>
+            <li><a href="/certificate" class="text-neutral-400 hover:text-white text-sm transition-colors">Certificates</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-neutral-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-neutral-500 text-xs">© 2024 ArNita Infotech. All rights reserved.</p>
+        <div class="flex items-center gap-6">
+          <a href="#" class="text-neutral-500 hover:text-white text-xs transition-colors">Privacy Policy</a>
+          <a href="#" class="text-neutral-500 hover:text-white text-xs transition-colors">Terms of Service</a>
+          <a href="#" class="text-neutral-500 hover:text-white text-xs transition-colors">Support</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script>
+    function getResourceIcon(type) {
+      if (type === "pdf") {
+        return `
+          <div class="w-10 h-10 bg-rose-100 rounded-small flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+          </div>
+        `;
+      }
+
+      if (type === "zip") {
+        return `
+          <div class="w-10 h-10 bg-indigo-100 rounded-small flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+            </svg>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="w-10 h-10 bg-emerald-100 rounded-small flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+          </svg>
+        </div>
+      `;
+    }
+
+    function renderResources(resources) {
+      const resourcesList = document.getElementById("resourcesList");
+      if (!resourcesList) return;
+
+      if (!resources || !resources.length) {
+        resourcesList.innerHTML = `
+          <div class="border border-neutral-200 rounded-large p-4">
+            <p class="text-sm text-neutral-500">No resources available for this lesson yet.</p>
+          </div>
+        `;
+        return;
+      }
+
+      resourcesList.innerHTML = resources.map((resource) => `
+        <a href="${resource.url}" target="_blank" class="flex items-center gap-4 p-3.5 border border-neutral-200 rounded-large hover:border-indigo-300 hover:bg-indigo-50 transition-colors group">
+          ${getResourceIcon(resource.type)}
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-neutral-800 group-hover:text-indigo-700 transition-colors">${resource.title}</p>
+            <p class="text-xs text-neutral-500 mt-0.5">${resource.subtitle || resource.type || "Resource"}</p>
+          </div>
+          <svg class="w-4 h-4 text-neutral-400 group-hover:text-indigo-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </a>
+      `).join("");
+    }
+
+    async function loadStudentNote(lessonId) {
+      try {
+        const res = await fetch(`/api/student/lessons/${lessonId}/note`, {
+          credentials: "include"
+        });
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const noteInput = document.getElementById("studentNoteInput");
+        if (noteInput) {
+          noteInput.value = data.content || "";
+        }
+      } catch (err) {
+        console.error("Error loading note:", err);
+      }
+    }
+
+    async function saveStudentNote() {
+      if (!currentLessonId) return;
+
+      try {
+        const noteInput = document.getElementById("studentNoteInput");
+        const status = document.getElementById("noteSaveStatus");
+
+        const res = await fetch(`/api/student/lessons/${currentLessonId}/note`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            content: noteInput.value
+          })
+        });
+
+        if (res.ok) {
+          status.textContent = "Saved just now";
+          setTimeout(() => {
+            status.textContent = "";
+          }, 1500);
+        } else {
+          status.textContent = "Save failed";
+        }
+      } catch (err) {
+        console.error("Error saving note:", err);
+        const status = document.getElementById("noteSaveStatus");
+        status.textContent = "Save failed";
+      }
+    }
+
+    async function loadLesson() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const lessonId = params.get("lessonId");
+        currentLessonId = lessonId;
+
+        if (!lessonId) return;
+
+        const res = await fetch(`/api/public/lesson/${lessonId}`);
+        if (!res.ok) {
+          throw new Error("Lesson not found");
+        }
+
+        const data = await res.json();
+
+        const lesson = data.lesson;
+        const moduleDoc = data.module;
+        const course = data.course;
+
+        currentLessonId = lessonId;
+        currentModuleId = moduleDoc?._id || "";
+        currentCourseId = course?._id || "";  
+
+        const takeModuleQuizLink = document.getElementById("takeModuleQuizLink");
+        if (takeModuleQuizLink) {
+          takeModuleQuizLink.href = currentModuleId
+            ? `/module-quiz?moduleId=${currentModuleId}`
+            : "/module-quiz";
+        }
+
+        const navCourseTitle = document.getElementById("navCourseTitle");
+        if (navCourseTitle) {
+          navCourseTitle.textContent = course?.title || "Course";
+          navCourseTitle.href = course?.slug ? `/course-detail?slug=${course.slug}` : "/courses";
+        }
+        const courseBackLink = document.getElementById("backToCourseLink");
+        if (courseBackLink) {
+          courseBackLink.href = course?.slug ? `/course-detail?slug=${course.slug}` : "/courses";
+        }
+        const prevLesson = data.prevLesson;
+        const nextLesson = data.nextLesson;
+
+
+        document.getElementById("navModuleTitle").textContent = moduleDoc?.title || "Module";
+        const lessonProgressBar = document.getElementById("lessonProgressBar");
+        const lessonProgressText = document.getElementById("lessonProgressText");
+
+        if (lessonProgressBar && lessonProgressText) {
+          lessonProgressBar.style.width = "0%";
+          lessonProgressText.textContent = "Lesson loaded";
+        }
+
+        document.getElementById("lessonTitle").textContent = lesson.title || "";
+        document.getElementById("lessonHeading").textContent = lesson.title || "";
+        document.getElementById("lessonModuleBadge").textContent = moduleDoc?.title || "Module";
+        document.getElementById("lessonTag").textContent = "Lesson";
+        document.getElementById("lessonDuration").textContent = "Self-paced";
+
+        if (lesson.videoUrl) {
+          document.getElementById("lessonVideo").src = lesson.videoUrl;
+        }
+
+        document.getElementById("lessonContent").innerHTML =
+          lesson.contentHtml || "<p class='text-neutral-500'>No lesson content available.</p>";
+
+        renderResources(lesson.resources || []);
+        loadStudentNote(lessonId);
+
+        const prevLink = document.getElementById("prevLessonLink");
+        const prevText = document.getElementById("prevLessonText");
+        if (prevLesson) {
+          prevLink.href = `/lesson?lessonId=${prevLesson._id}`;
+          prevText.textContent = `Previous: ${prevLesson.title}`;
+          prevLink.classList.remove("opacity-50", "pointer-events-none");
+        } else {
+          prevLink.href = "#";
+          prevText.textContent = "No previous lesson";
+          prevLink.classList.add("opacity-50", "pointer-events-none");
+        }
+
+        const nextLink = document.getElementById("nextLessonLink");
+        const nextText = document.getElementById("nextLessonText");
+        if (nextLesson) {
+          nextLink.href = `/lesson?lessonId=${nextLesson._id}`;
+          nextText.textContent = `Next: ${nextLesson.title}`;
+          nextLink.classList.remove("opacity-50", "pointer-events-none");
+        } else {
+          nextLink.href = "#";
+          nextText.textContent = "No next lesson";
+          nextLink.classList.add("opacity-50", "pointer-events-none");
+        }
+      } catch (err) {
+        console.error("Error loading lesson:", err);
+        document.getElementById("lessonTitle").textContent = "Lesson not found";
+        document.getElementById("lessonHeading").textContent = "Lesson not found";
+        document.getElementById("lessonContent").innerHTML =
+          "<p class='text-neutral-500'>Unable to load lesson content.</p>";
+      }
+      try {
+        const profileRes = await fetch("/api/profile/me", { credentials: "include" });
+        if (profileRes.ok) {
+          const profile = await profileRes.json();
+          const lessonUserName = document.getElementById("lessonUserName");
+          if (lessonUserName) {
+            lessonUserName.textContent = profile.name || "Student";
+          }
+        }
+      } catch (err) {
+        console.error("Error loading profile name:", err);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadLesson);
+  </script>
+  <script>
+    function toggleSidebarModule(id) {
+      const el = document.getElementById(id);
+      const chevron = document.getElementById(id + '-chevron');
+      if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+        if (chevron) chevron.classList.add('rotate-180');
+      } else {
+        el.classList.add('hidden');
+        if (chevron) chevron.classList.remove('rotate-180');
+      }
+    }
+
+    function switchTab(tab) {
+      const tabs = ['overview', 'notes', 'resources'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('tab-' + t);
+        const content = document.getElementById('content-' + t);
+        if (t === tab) {
+          btn.classList.add('text-indigo-600', 'border-b-2', 'border-indigo-600');
+          btn.classList.remove('text-neutral-500', 'border-transparent');
+          content.classList.remove('hidden');
+        } else {
+          btn.classList.remove('text-indigo-600', 'border-indigo-600');
+          btn.classList.add('text-neutral-500', 'border-transparent');
+          content.classList.add('hidden');
+        }
+      });
+    }
+
+    function togglePlay() {
+      const icon = document.getElementById('playIcon');
+      const isPaused = icon.getAttribute('d') === 'M8 5v14l11-7z';
+      if (isPaused) {
+        icon.setAttribute('d', 'M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z');
+      } else {
+        icon.setAttribute('d', 'M8 5v14l11-7z');
+      }
+    }
+
+    let currentLessonId = "";
+    let currentModuleId = "";
+    let currentCourseId = "";
+
+    function markComplete() {
+      if (!currentModuleId) {
+        alert("Module quiz is not available yet.");
+        return;
+      }
+
+      window.location.href = `/module-quiz?moduleId=${currentModuleId}`;
+    }
+  </script>
+
+</body>
+</html>

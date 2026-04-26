@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" style="height: auto; min-height: 100%;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArNita Infotech - Course Catalog</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link id="heading-font-link" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link id="body-font-link" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['var(--font-heading-name)', 'sans-serif'],
+            body: ['var(--font-body-name)', 'sans-serif'],
+          },
+          spacing: {
+            base: 'var(--space-base)',
+          },
+          borderRadius: {
+            small: 'var(--radius-small)',
+            large: 'var(--radius-large)',
+          },
+          boxShadow: {
+            custom: 'var(--shadow-custom)',
+            'custom-hover': 'var(--shadow-custom-hover)',
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --font-heading-name: 'Poppins';
+      --font-body-name: 'Work Sans';
+      --font-heading: 'Poppins', sans-serif;
+      --font-body: 'Work Sans', sans-serif;
+      --letter-spacing-heading: -0.5px;
+      --letter-spacing-body: 0px;
+
+      --space-base: 1rem;
+
+      --radius-small: 8px;
+      --radius-large: 16px;
+      --border-width: 1.5px;
+
+      --shadow-color: 15 23 42;
+      --shadow-offset-x: 0px;
+      --shadow-offset-y: 4px;
+      --shadow-blur: 24px;
+      --shadow-spread: 0px;
+      --shadow-opacity: 0.08;
+      --shadow-custom: 0px 4px 24px 0px rgba(15, 23, 42, 0.08);
+      --shadow-custom-hover: 0px 8px 40px 0px rgba(15, 23, 42, 0.14);
+    }
+  </style>
+  <script>
+    let allCourses = [];
+    let filteredCourses = [];
+    let selectedQuickCategory = "";
+
+    function parseDurationToHours(durationText) {
+      if (!durationText) return 0;
+      const match = durationText.match(/(\d+(\.\d+)?)/);
+      return match ? parseFloat(match[1]) : 0;
+    }
+
+    function getSelectedCategories() {
+      return Array.from(document.querySelectorAll(".category-filter:checked")).map(el => el.value);
+    }
+
+    function getSelectedDifficulty() {
+      const selected = document.querySelector(".difficulty-filter:checked");
+      return selected ? selected.value : "";
+    }
+
+    function getSelectedDuration() {
+      const selected = document.querySelector(".duration-filter:checked");
+      return selected ? selected.value : "";
+    }
+
+    function applyFiltersAndSort() {
+      const searchText = document.getElementById("searchInput")?.value.toLowerCase().trim() || "";
+      const selectedCategories = getSelectedCategories();
+      const selectedDifficulty = getSelectedDifficulty();
+      const selectedDuration = getSelectedDuration();
+      const sortValue = document.getElementById("sortSelect")?.value || "Most Popular";
+
+      filteredCourses = allCourses.filter(course => {
+        const titleMatch = (course.title || "").toLowerCase().includes(searchText);
+        const descMatch = (course.shortDescription || "").toLowerCase().includes(searchText);
+        const teacherMatch = (course.teacherName || "").toLowerCase().includes(searchText);
+        const matchesSearch = !searchText || titleMatch || descMatch || teacherMatch;
+
+        const matchesCategory = selectedQuickCategory
+          ? course.category === selectedQuickCategory
+          : (selectedCategories.length === 0 || selectedCategories.includes(course.category));
+
+        const matchesDifficulty = !selectedDifficulty || course.level === selectedDifficulty;
+
+        const hours = parseDurationToHours(course.duration);
+        let matchesDuration = true;
+        if (selectedDuration === "short") matchesDuration = hours < 5;
+        if (selectedDuration === "medium") matchesDuration = hours >= 5 && hours <= 15;
+        if (selectedDuration === "long") matchesDuration = hours > 15;
+
+        return matchesSearch && matchesCategory && matchesDifficulty && matchesDuration;
+      });
+
+      if (sortValue === "Price: Low to High") {
+        filteredCourses.sort((a, b) => (a.price || 0) - (b.price || 0));
+      } else if (sortValue === "Price: High to Low") {
+        filteredCourses.sort((a, b) => (b.price || 0) - (a.price || 0));
+      } else if (sortValue === "Newest") {
+        filteredCourses.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      } else {
+        filteredCourses.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      }
+
+      renderCourses(filteredCourses);
+    }
+
+    function renderCourses(courses) {
+      const grid = document.getElementById("courseGrid");
+      const resultsInfo = document.getElementById("resultsInfo");
+      if (!grid) return;
+
+      grid.innerHTML = "";
+
+      if (!courses.length) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-large border border-neutral-200 shadow-custom p-10 text-center">
+            <h3 class="font-heading font-semibold text-xl text-neutral-900 mb-2">No courses found</h3>
+            <p class="text-neutral-500">Try changing your search or filters.</p>
+          </div>
+        `;
+        if (resultsInfo) resultsInfo.textContent = "0 courses found";
+        return;
+      }
+
+      courses.forEach((course) => {
+        const card = document.createElement("a");
+        card.href = `/course-detail?slug=${course.slug}`;
+        card.className = "bg-white rounded-large border border-neutral-200 shadow-custom hover:shadow-custom-hover transition-shadow overflow-hidden group block";
+
+        card.innerHTML = `
+          <div class="overflow-hidden h-44">
+            <img src="${course.thumbnail || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop'}" alt="${course.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+          </div>
+          <div class="p-5">
+            <div class="flex items-center gap-2 mb-3 flex-wrap">
+              <span class="bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-small">${course.category || "General"}</span>
+              <span class="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-small">${course.level || "Beginner"}</span>
+            </div>
+            <h3 class="font-heading font-semibold text-base text-neutral-900 mb-2 leading-snug">${course.title}</h3>
+            <p class="text-neutral-500 text-xs mb-4">By ${course.teacherName || "ArNita Faculty"} · ${course.duration || "Self-paced"}</p>
+            <p class="text-neutral-600 text-sm mb-4">${course.shortDescription || ""}</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1">
+                <span class="text-amber-400 text-sm">★</span>
+                <span class="font-semibold text-neutral-800 text-sm">${course.rating || "4.8"}</span>
+              </div>
+              <span class="font-heading font-bold text-indigo-600 text-base">
+                ${course.price === 0 || course.price == null ? "Free" : `₹${course.price}`}
+              </span>
+            </div>
+            <div class="mt-3">
+              <span class="block text-center text-sm font-semibold text-white bg-indigo-600 px-4 py-2 rounded-small">
+                View Course
+              </span>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+
+      if (resultsInfo) {
+        resultsInfo.textContent = `${courses.length} course${courses.length === 1 ? "" : "s"} found`;
+      }
+      const liveResultsCount = document.getElementById("liveResultsCount");
+      if (liveResultsCount) {
+        liveResultsCount.innerHTML = `<span class="font-semibold text-neutral-900">${courses.length} course${courses.length === 1 ? "" : "s"}</span> found`;
+      }
+    }
+
+    async function loadCourses() {
+      try {
+        const res = await fetch("/api/public/courses");
+        if (!res.ok) {
+          throw new Error("Failed to fetch courses");
+        }
+
+        const data = await res.json();
+        allCourses = Array.isArray(data) ? data : [];
+        filteredCourses = [...allCourses];
+        applyFiltersAndSort();
+      } catch (err) {
+        console.error("Error loading courses:", err);
+        const grid = document.getElementById("courseGrid");
+        if (grid) {
+          grid.innerHTML = `
+            <div class="col-span-full bg-white rounded-large shadow-custom p-8 text-center">
+              <p class="text-neutral-500">Unable to load courses right now.</p>
+            </div>
+          `;
+        }
+      }
+    }
+
+    function resetQuickCategoryButtons() {
+      document.querySelectorAll(".quick-category-btn").forEach(btn => {
+        btn.classList.remove("bg-indigo-600", "text-white");
+        btn.classList.add("bg-white", "border", "border-neutral-300", "text-neutral-600");
+      });
+    }
+
+    function setupEventListeners() {
+      document.getElementById("searchInput")?.addEventListener("input", applyFiltersAndSort);
+      document.getElementById("sortSelect")?.addEventListener("change", applyFiltersAndSort);
+      document.getElementById("applyFiltersBtn")?.addEventListener("click", applyFiltersAndSort);
+
+      document.getElementById("clearFiltersBtn")?.addEventListener("click", () => {
+        document.getElementById("searchInput").value = "";
+        document.querySelectorAll(".category-filter").forEach(el => el.checked = false);
+        document.querySelector('.difficulty-filter[value=""]').checked = true;
+        document.querySelector('.duration-filter[value=""]').checked = true;
+        document.getElementById("sortSelect").value = "Most Popular";
+        selectedQuickCategory = "";
+        resetQuickCategoryButtons();
+        const allBtn = document.querySelector('.quick-category-btn[data-category=""]');
+        if (allBtn) {
+          allBtn.classList.remove("bg-white", "border", "border-neutral-300", "text-neutral-600");
+          allBtn.classList.add("bg-indigo-600", "text-white");
+        }
+        applyFiltersAndSort();
+      });
+
+      document.querySelectorAll(".category-filter, .difficulty-filter, .duration-filter").forEach(el => {
+        el.addEventListener("change", () => {
+          selectedQuickCategory = "";
+          resetQuickCategoryButtons();
+          const allBtn = document.querySelector('.quick-category-btn[data-category=""]');
+          if (allBtn) {
+            allBtn.classList.remove("bg-white", "border", "border-neutral-300", "text-neutral-600");
+            allBtn.classList.add("bg-indigo-600", "text-white");
+          }
+          applyFiltersAndSort();
+        });
+      });
+
+      document.querySelectorAll(".quick-category-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedQuickCategory = btn.dataset.category;
+          resetQuickCategoryButtons();
+          btn.classList.remove("bg-white", "border", "border-neutral-300", "text-neutral-600");
+          btn.classList.add("bg-indigo-600", "text-white");
+          applyFiltersAndSort();
+        });
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setupEventListeners();
+      loadCourses();
+    });
+  </script>
+</head>
+<body class="font-body bg-gray-50 text-neutral-900" style="height: auto; min-height: 100%;">
+
+  <!-- Navigation -->
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-indigo-600 rounded-small flex items-center justify-center">
+          <span class="text-white font-heading font-bold text-sm">AI</span>
+        </div>
+        <a href="/home"><span class="font-heading font-bold text-xl text-neutral-900 tracking-tight">ArNita Infotech</span></a>
+      </div>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/home" class="text-neutral-600 hover:text-indigo-600 font-medium text-sm transition-colors">Home</a>
+        <a href="/courses" class="text-indigo-600 font-medium text-sm">Courses</a>
+        <a href="/dashboard" class="text-neutral-600 hover:text-indigo-600 font-medium text-sm transition-colors">Dashboard</a>
+        <a href="/profile" class="text-neutral-600 hover:text-indigo-600 font-medium text-sm transition-colors">Profile</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="http://localhost:3000/" class="hidden sm:inline-flex text-neutral-700 font-medium text-sm px-4 py-2 rounded-small hover:bg-neutral-100 transition-colors">Log In</a>
+        <a href="http://localhost:3000/" class="inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-5 py-2.5 rounded-small transition-colors shadow-custom">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="bg-white border-b border-neutral-200">
+    <div class="max-w-7xl mx-auto px-6 py-10">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 text-sm text-neutral-500 mb-2">
+            <a href="/home" class="hover:text-indigo-600 transition-colors">Home</a>
+            <span>›</span>
+            <span class="text-neutral-800 font-medium">Course Catalog</span>
+          </div>
+          <h1 class="font-heading font-bold text-3xl text-neutral-900" style="letter-spacing: var(--letter-spacing-heading);">Explore All Courses</h1>
+          <p class="text-neutral-600 text-base mt-1">Explore expert-led courses across every skill level and category</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <input id="searchInput" type="text" placeholder="Search courses..." class="w-64 pl-10 pr-4 py-2.5 border border-neutral-300 rounded-small text-sm text-neutral-700 placeholder-neutral-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 bg-white">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <button id="mobileFilterBtn" class="flex items-center gap-2 px-4 py-2.5 border border-neutral-300 rounded-small text-sm text-neutral-700 hover:bg-neutral-50 transition-colors bg-white">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
+            Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-6 py-8 flex gap-8">
+
+    <!-- Sidebar Filters -->
+    <aside class="hidden lg:block w-64 flex-shrink-0">
+      <div class="bg-white rounded-large shadow-custom p-6 sticky top-24">
+
+        <!-- Category Filter -->
+        <div class="mb-6">
+          <h3 class="font-heading font-semibold text-sm text-neutral-900 mb-3 uppercase tracking-wide">Category</h3>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" class="category-filter w-4 h-4 accent-indigo-600 rounded" value="Development">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">Development</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" class="category-filter w-4 h-4 accent-indigo-600 rounded" value="Data Science">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">Data Science</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" class="category-filter w-4 h-4 accent-indigo-600 rounded" value="Design">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">Design</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" class="category-filter w-4 h-4 accent-indigo-600 rounded" value="Business">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">Business</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" class="category-filter w-4 h-4 accent-indigo-600 rounded" value="Marketing">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">Marketing</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" class="category-filter w-4 h-4 accent-indigo-600 rounded" value="Cloud & DevOps">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">Cloud & DevOps</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" class="category-filter w-4 h-4 accent-indigo-600 rounded" value="Cybersecurity">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">Cybersecurity</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="border-t border-neutral-200 my-5"></div>
+
+        <!-- Difficulty Filter -->
+        <div class="mb-6">
+          <h3 class="font-heading font-semibold text-sm text-neutral-900 mb-3 uppercase tracking-wide">Difficulty</h3>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="radio" name="difficulty" value="" checked class="difficulty-filter w-4 h-4 accent-indigo-600">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">All Levels</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="radio" name="difficulty" value="Beginner" class="difficulty-filter w-4 h-4 accent-indigo-600">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">Beginner</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="radio" name="difficulty" value="Intermediate" class="difficulty-filter w-4 h-4 accent-indigo-600">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">Intermediate</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="radio" name="difficulty" value="Advanced" class="difficulty-filter w-4 h-4 accent-indigo-600">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">Advanced</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="border-t border-neutral-200 my-5"></div>
+
+        <!-- Duration Filter -->
+        <div class="mb-6">
+          <h3 class="font-heading font-semibold text-sm text-neutral-900 mb-3 uppercase tracking-wide">Duration</h3>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="radio" name="duration" value="" checked class="duration-filter w-4 h-4 accent-indigo-600">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">All Durations</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="radio" name="duration" value="short" class="duration-filter w-4 h-4 accent-indigo-600">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">Under 5 hours</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="radio" name="duration" value="medium" class="duration-filter w-4 h-4 accent-indigo-600">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">5–15 hours</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer group">
+              <input type="radio" name="duration" value="long" class="duration-filter w-4 h-4 accent-indigo-600">
+              <span class="text-sm text-neutral-700 group-hover:text-indigo-600 transition-colors">15+ hours</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="border-t border-neutral-200 my-5"></div>
+
+        <button id="applyFiltersBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm py-2.5 rounded-small transition-colors shadow-custom">Apply Filters</button>
+        <button id="clearFiltersBtn" class="w-full mt-2 text-neutral-500 hover:text-neutral-700 font-medium text-sm py-2 transition-colors">Clear All</button>
+      </div>
+    </aside>
+
+    <!-- Course Grid -->
+    <div class="flex-1 min-w-0">
+
+      <!-- Sort & Results Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <div>
+          <p id="liveResultsCount" class="text-neutral-600 text-sm"></p>
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="text-sm text-neutral-600 whitespace-nowrap">Sort by:</label>
+          <select id="sortSelect" class="text-sm border border-neutral-300 rounded-small px-3 py-2 text-neutral-700 bg-white focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+            <option>Most Popular</option>
+            <option>Highest Rated</option>
+            <option>Newest</option>
+            <option>Price: Low to High</option>
+            <option>Price: High to Low</option>
+          </select>
+          <div class="flex items-center gap-1 border border-neutral-300 rounded-small p-1 bg-white">
+            <button class="p-1.5 bg-indigo-600 rounded text-white">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z"/></svg>
+            </button>
+            <button class="p-1.5 text-neutral-400 hover:text-neutral-600 rounded transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Quick Filters -->
+      <div id="quickCategoryFilters" class="flex items-center gap-2 mb-6 flex-wrap">
+        <button data-category="" class="quick-category-btn px-4 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-small transition-colors">All</button>
+        <button data-category="Development" class="quick-category-btn px-4 py-1.5 bg-white border border-neutral-300 text-neutral-600 text-xs font-medium rounded-small hover:border-indigo-400 hover:text-indigo-600 transition-colors">Development</button>
+        <button data-category="Data Science" class="quick-category-btn px-4 py-1.5 bg-white border border-neutral-300 text-neutral-600 text-xs font-medium rounded-small hover:border-indigo-400 hover:text-indigo-600 transition-colors">Data Science</button>
+        <button data-category="Design" class="quick-category-btn px-4 py-1.5 bg-white border border-neutral-300 text-neutral-600 text-xs font-medium rounded-small hover:border-indigo-400 hover:text-indigo-600 transition-colors">Design</button>
+        <button data-category="Business" class="quick-category-btn px-4 py-1.5 bg-white border border-neutral-300 text-neutral-600 text-xs font-medium rounded-small hover:border-indigo-400 hover:text-indigo-600 transition-colors">Business</button>
+        <button data-category="Marketing" class="quick-category-btn px-4 py-1.5 bg-white border border-neutral-300 text-neutral-600 text-xs font-medium rounded-small hover:border-indigo-400 hover:text-indigo-600 transition-colors">Marketing</button>
+        <button data-category="Cloud & DevOps" class="quick-category-btn px-4 py-1.5 bg-white border border-neutral-300 text-neutral-600 text-xs font-medium rounded-small hover:border-indigo-400 hover:text-indigo-600 transition-colors">Cloud & DevOps</button>
+      </div>
+
+      <!-- Course Cards Grid -->
+<div id="courseGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+
+      <!-- Pagination -->
+      <div class="mt-8">
+        <p id="resultsInfo" class="text-sm text-neutral-500 text-center"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-neutral-900 mt-12">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+        <div class="col-span-1 md:col-span-2">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-9 h-9 bg-indigo-500 rounded-small flex items-center justify-center">
+              <span class="text-white font-heading font-bold text-sm">AI</span>
+            </div>
+            <span class="font-heading font-bold text-xl text-white">ArNita Infotech</span>
+          </div>
+          <p class="text-neutral-400 text-sm leading-relaxed max-w-xs">Empowering learners worldwide with expert-led courses, interactive modules, and verified certificates.</p>
+        </div>
+        <div>
+          <h4 class="font-heading font-semibold text-white text-sm mb-4">Platform</h4>
+          <ul class="space-y-2.5">
+            <li><a href="/courses" class="text-neutral-400 hover:text-white text-sm transition-colors">Course Catalog</a></li>
+            <li><a href="/courses" class="text-neutral-400 hover:text-white text-sm transition-colors">Browse Courses</a></li>
+            <li><a href="/lesson" class="text-neutral-400 hover:text-white text-sm transition-colors">Module Lessons</a></li>
+            <li><a href="/module-quiz" class="text-neutral-400 hover:text-white text-sm transition-colors">Module Quizzes</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-heading font-semibold text-white text-sm mb-4">Account</h4>
+          <ul class="space-y-2.5">
+            <li><a href="/dashboard" class="text-neutral-400 hover:text-white text-sm transition-colors">Dashboard</a></li>
+            <li><a href="/profile" class="text-neutral-400 hover:text-white text-sm transition-colors">Profile</a></li>
+            <li><a href="/final-exam" class="text-neutral-400 hover:text-white text-sm transition-colors">Final Exam</a></li>
+            <li><a href="/certificate" class="text-neutral-400 hover:text-white text-sm transition-colors">Certificates</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-neutral-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-neutral-500 text-xs">© 2024 ArNita Infotech. All rights reserved.</p>
+        <div class="flex items-center gap-6">
+          <a href="#" class="text-neutral-500 hover:text-white text-xs transition-colors">Privacy Policy</a>
+          <a href="#" class="text-neutral-500 hover:text-white text-xs transition-colors">Terms of Service</a>
+          <a href="#" class="text-neutral-500 hover:text-white text-xs transition-colors">Support</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

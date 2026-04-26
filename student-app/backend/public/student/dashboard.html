@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" style="height: auto; min-height: 100%;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArNita Infotech - Student Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Poppins', 'sans-serif'],
+            body: ['Work Sans', 'sans-serif'],
+          },
+          borderRadius: {
+            small: '8px',
+            large: '16px',
+          },
+          boxShadow: {
+            custom: '0px 4px 24px 0px rgba(15, 23, 42, 0.08)',
+            'custom-hover': '0px 8px 40px 0px rgba(15, 23, 42, 0.14)',
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-body bg-gray-50 text-neutral-900 min-h-screen">
+
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/home" class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-indigo-600 rounded-small flex items-center justify-center">
+            <span class="text-white font-heading font-bold text-sm">AI</span>
+          </div>
+          <span class="font-heading font-bold text-xl text-neutral-900">ArNita Infotech</span>
+        </a>
+      </div>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/home" class="text-neutral-600 hover:text-indigo-600 font-medium text-sm">Home</a>
+        <a href="/courses" class="text-neutral-600 hover:text-indigo-600 font-medium text-sm">Courses</a>
+        <a href="/dashboard" class="text-indigo-600 font-medium text-sm">Dashboard</a>
+        <a href="/profile" class="text-neutral-600 hover:text-indigo-600 font-medium text-sm">Profile</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/logout" class="inline-flex text-neutral-700 font-medium text-sm px-4 py-2 rounded-small hover:bg-neutral-100 transition-colors">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="max-w-7xl mx-auto px-6 py-8">
+    <div class="mb-8">
+      <p class="text-sm text-indigo-600 font-semibold mb-2">Welcome back</p>
+      <h1 class="font-heading font-extrabold text-3xl md:text-4xl text-neutral-900">Student Dashboard</h1>
+      <p class="text-neutral-600 mt-2">Track your progress, continue learning, and manage your certificates.</p>
+    </div>
+
+    <div id="dashboardCoursesLoading" class="text-neutral-500 text-sm mb-4">
+      Loading your learning dashboard...
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Enrolled Courses</p>
+        <h2 id="dashboardCoursesCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Completed Modules</p>
+        <h2 id="dashboardModulesPassed" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Final Exams Unlocked</p>
+        <h2 id="dashboardFinalUnlocked" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <p class="text-sm text-neutral-500">Certificates Earned</p>
+        <h2 id="dashboardCertificatesCount" class="font-heading font-bold text-3xl text-neutral-900 mt-2">0</h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+      <div class="xl:col-span-2 bg-white rounded-large shadow-custom p-6">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h3 class="font-heading font-bold text-xl text-neutral-900">Continue Learning</h3>
+            <p class="text-sm text-neutral-500 mt-1">Resume your latest course progress</p>
+          </div>
+          <a href="/courses" class="text-indigo-600 font-semibold text-sm">View all</a>
+        </div>
+        <div id="dashboardCoursesGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+      </div>
+
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <h3 class="font-heading font-bold text-xl text-neutral-900 mb-4">Quick Actions</h3>
+        <div class="space-y-3">
+          <a href="/courses" class="block w-full border border-neutral-200 hover:border-indigo-300 hover:bg-indigo-50 rounded-large px-4 py-4 transition-colors">
+            <p class="font-semibold text-neutral-900 text-sm">Browse Courses</p>
+            <p class="text-xs text-neutral-500 mt-1">Explore new learning paths</p>
+          </a>
+          <a href="/profile" class="block w-full border border-neutral-200 hover:border-indigo-300 hover:bg-indigo-50 rounded-large px-4 py-4 transition-colors">
+            <p class="font-semibold text-neutral-900 text-sm">Edit Profile</p>
+            <p class="text-xs text-neutral-500 mt-1">Update personal details</p>
+          </a>
+          <a href="/certificate" class="block w-full border border-neutral-200 hover:border-indigo-300 hover:bg-indigo-50 rounded-large px-4 py-4 transition-colors">
+            <p class="font-semibold text-neutral-900 text-sm">My Certificates</p>
+            <p class="text-xs text-neutral-500 mt-1">View and download achievements</p>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <h3 class="font-heading font-bold text-xl text-neutral-900 mb-4">Recent Activity</h3>
+        <div class="space-y-4">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-emerald-600 text-sm">✓</span>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-neutral-900">Completed lesson: CSS Fundamentals & Box Model</p>
+              <p class="text-xs text-neutral-500 mt-1">Today · 10:42 AM</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-indigo-600 text-sm">★</span>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-neutral-900">Earned certificate: HTML & CSS Foundations</p>
+              <p class="text-xs text-neutral-500 mt-1">Yesterday · 4:15 PM</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 bg-violet-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-violet-600 text-sm">→</span>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-neutral-900">Started new course: Python & Machine Learning Masterclass</p>
+              <p class="text-xs text-neutral-500 mt-1">2 days ago</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <h3 class="font-heading font-bold text-xl text-neutral-900 mb-4">Upcoming Goals</h3>
+        <div class="space-y-4">
+          <div class="border border-neutral-200 rounded-large p-4">
+            <div class="flex items-center justify-between">
+              <p class="font-semibold text-neutral-900 text-sm">Complete Module 2 Quiz</p>
+              <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-small">In Progress</span>
+            </div>
+            <p class="text-xs text-neutral-500 mt-2">Target date: This week</p>
+          </div>
+          <div class="border border-neutral-200 rounded-large p-4">
+            <div class="flex items-center justify-between">
+              <p class="font-semibold text-neutral-900 text-sm">Download latest certificate</p>
+              <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-small">Pending</span>
+            </div>
+            <p class="text-xs text-neutral-500 mt-2">Available after final exam completion</p>
+          </div>
+          <div class="border border-neutral-200 rounded-large p-4">
+            <div class="flex items-center justify-between">
+              <p class="font-semibold text-neutral-900 text-sm">Update profile details</p>
+              <span class="text-xs bg-neutral-100 text-neutral-700 px-2 py-1 rounded-small">Optional</span>
+            </div>
+            <p class="text-xs text-neutral-500 mt-2">Keep your academic data current</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-neutral-900 mt-12">
+    <div class="max-w-7xl mx-auto px-6 py-10">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-9 h-9 bg-indigo-500 rounded-small flex items-center justify-center">
+          <span class="text-white font-heading font-bold text-sm">AI</span>
+        </div>
+        <span class="font-heading font-bold text-xl text-white">ArNita Infotech</span>
+      </div>
+      <p class="text-neutral-400 text-sm">Empowering learners worldwide with expert-led courses, interactive modules, and verified certificates.</p>
+    </div>
+  </footer>
+
+  <script>
+  function getOverallPercent(item) {
+    const progress = item.progress || {};
+    const moduleCount = progress.modules?.length || item.modulesCount || 0;
+    const passedCount = progress.modules?.filter(m => m.quizPassed).length || 0;
+    return moduleCount ? Math.round((passedCount / moduleCount) * 100) : 0;
+  }
+
+  function createDashboardCourseCard(item) {
+    const progress = item.progress || {};
+    const moduleCount = progress.modules?.length || item.modulesCount || 0;
+    const passedCount = progress.modules?.filter(m => m.quizPassed).length || 0;
+    const overallPercent = getOverallPercent(item);
+
+    return `
+      <div class="bg-white rounded-large shadow-custom overflow-hidden">
+        <div class="h-48 overflow-hidden">
+          <img
+            src="${item.course.thumbnail || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=600&fit=crop'}"
+            alt="${item.course.title}"
+            class="w-full h-full object-cover"
+          >
+        </div>
+        <div class="p-6">
+          <div class="flex items-center gap-2 flex-wrap mb-3">
+            <span class="bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-small">
+              ${item.course.category || 'General'}
+            </span>
+            <span class="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-small">
+              ${item.course.level || 'Beginner'}
+            </span>
+          </div>
+
+          <h3 class="font-heading font-bold text-xl text-neutral-900 mb-2">
+            ${item.course.title}
+          </h3>
+
+          <p class="text-sm text-neutral-500 mb-4">
+            By ${item.course.teacherName || 'ArNita Faculty'} · ${item.course.duration || 'Self-paced'}
+          </p>
+
+          <div class="mb-4">
+            <div class="flex items-center justify-between text-sm mb-2">
+              <span class="text-neutral-600">Progress</span>
+              <span class="font-semibold text-neutral-900">${overallPercent}%</span>
+            </div>
+            <div class="w-full h-2.5 bg-neutral-100 rounded-full overflow-hidden">
+              <div class="h-full bg-indigo-600 rounded-full" style="width:${overallPercent}%"></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 mb-5">
+            <div class="border border-neutral-200 rounded-large p-3">
+              <p class="text-xs text-neutral-500">Modules Passed</p>
+              <p class="font-semibold text-neutral-900 mt-1">${passedCount}/${moduleCount}</p>
+            </div>
+            <div class="border border-neutral-200 rounded-large p-3">
+              <p class="text-xs text-neutral-500">Final Exam</p>
+              <p class="font-semibold ${progress.finalExamUnlocked ? 'text-emerald-600' : 'text-neutral-900'} mt-1">
+                ${progress.finalExamUnlocked ? 'Unlocked' : 'Locked'}
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <a href="/course-detail?slug=${item.course.slug}" class="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-5 py-3 rounded-small transition-colors">
+              Continue Course
+            </a>
+            <a href="/final-exam?courseId=${item.course._id}" class="inline-flex items-center justify-center border border-neutral-300 hover:bg-neutral-50 text-neutral-700 font-semibold text-sm px-5 py-3 rounded-small transition-colors ${progress.finalExamUnlocked ? '' : 'opacity-50 pointer-events-none'}">
+              Final Exam
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  async function loadDashboardData() {
+    const loadingEl = document.getElementById("dashboardCoursesLoading");
+    const grid = document.getElementById("dashboardCoursesGrid");
+
+    try {
+      const [coursesRes, certRes] = await Promise.all([
+        fetch("/api/student/my-courses", { credentials: "include" }),
+        fetch("/api/certificate", { credentials: "include" })
+      ]);
+
+      const courses = coursesRes.ok ? await coursesRes.json() : [];
+      const certs = certRes.ok ? await certRes.json() : [];
+
+      const items = Array.isArray(courses) ? courses : [];
+
+      const coursesCount = items.length;
+      const modulesPassed = items.reduce((sum, item) => {
+        return sum + (item.progress?.modules?.filter(m => m.quizPassed).length || 0);
+      }, 0);
+
+      const finalUnlocked = items.filter(item => item.progress?.finalExamUnlocked).length;
+
+      const certificatesCount = items.filter(item =>
+        certs.some(c => c.courseId === item.course._id || c.courseId?._id === item.course._id)
+      ).length;
+
+      const coursesCountEl = document.getElementById("dashboardCoursesCount");
+      const modulesPassedEl = document.getElementById("dashboardModulesPassed");
+      const finalUnlockedEl = document.getElementById("dashboardFinalUnlocked");
+      const certificatesCountEl = document.getElementById("dashboardCertificatesCount");
+
+      if (coursesCountEl) coursesCountEl.textContent = coursesCount;
+      if (modulesPassedEl) modulesPassedEl.textContent = modulesPassed;
+      if (finalUnlockedEl) finalUnlockedEl.textContent = finalUnlocked;
+      if (certificatesCountEl) certificatesCountEl.textContent = certificatesCount;
+
+      loadingEl.style.display = "none";
+
+      if (!items.length) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-large shadow-custom p-10 text-center">
+            <h3 class="font-heading font-semibold text-xl text-neutral-900 mb-2">No enrolled courses yet</h3>
+            <p class="text-neutral-500 mb-4">Start exploring courses to begin learning.</p>
+            <a href="/courses" class="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-5 py-3 rounded-small transition-colors">
+              Browse Courses
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = items.map(createDashboardCourseCard).join("");
+    } catch (err) {
+      console.error("Error loading dashboard:", err);
+      loadingEl.style.display = "none";
+      grid.innerHTML = `
+        <div class="col-span-full bg-white rounded-large shadow-custom p-10 text-center">
+          <p class="text-neutral-500">Unable to load dashboard data right now.</p>
+        </div>
+      `;
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", loadDashboardData);
+</script>
+</body>
+</html>

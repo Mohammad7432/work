@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en" style="height:auto; min-height:100%;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArNita Infotech - Teacher Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Poppins', 'sans-serif'],
+            body: ['Work Sans', 'sans-serif'],
+          },
+          borderRadius: {
+            small: '8px',
+            large: '16px',
+          },
+          boxShadow: {
+            custom: '0px 4px 24px 0px rgba(15, 23, 42, 0.08)',
+            'custom-hover': '0px 8px 40px 0px rgba(15, 23, 42, 0.14)',
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-body bg-gray-50 text-neutral-900 min-h-screen">
+
+  <nav class="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/teacher-dashboard" class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-indigo-600 rounded-small flex items-center justify-center">
+          <span class="text-white font-heading font-bold text-sm">AI</span>
+        </div>
+        <span class="font-heading font-bold text-xl text-neutral-900">ArNita Infotech</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/teacher-dashboard" class="text-indigo-600 text-sm font-medium">Dashboard</a>
+        <a href="./teacher_students.html" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Students</a>
+        <a href="./teacher_profile.html" class="text-neutral-600 hover:text-indigo-600 text-sm font-medium">Profile</a>
+      </div>
+
+      <a href="/logout" class="text-sm font-medium text-neutral-700 hover:text-indigo-600">Logout</a>
+    </div>
+  </nav>
+
+  <section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="mb-8">
+      <div class="bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 rounded-large shadow-custom-hover overflow-hidden">
+        <div class="px-8 py-8 md:px-10 md:py-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div>
+            <p class="text-indigo-100 text-sm font-semibold mb-2">Teacher Workspace</p>
+            <h1 class="font-heading font-extrabold text-3xl md:text-4xl text-white">Manage Course Content</h1>
+            <p class="text-indigo-100 mt-3 max-w-2xl">
+              Create modules, build lessons, upload resources, and manage quizzes from one clean dashboard.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 min-w-[280px]">
+            <div class="bg-white/10 backdrop-blur-sm rounded-large p-4 border border-white/10">
+              <p class="text-xs text-indigo-100">Courses</p>
+              <p id="summaryCourses" class="font-heading font-bold text-2xl text-white mt-1">0</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-large p-4 border border-white/10">
+              <p class="text-xs text-indigo-100">Modules</p>
+              <p id="summaryModules" class="font-heading font-bold text-2xl text-white mt-1">0</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-large p-4 border border-white/10">
+              <p class="text-xs text-indigo-100">Lessons</p>
+              <p id="summaryLessons" class="font-heading font-bold text-2xl text-white mt-1">0</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-large p-4 border border-white/10">
+              <p class="text-xs text-indigo-100">Quizzes</p>
+              <p id="summaryQuizzes" class="font-heading font-bold text-2xl text-white mt-1">0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-heading font-bold text-xl text-neutral-900">Quick Actions</h2>
+          <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-small">Today</span>
+        </div>
+
+        <div class="space-y-3">
+          <button onclick="document.getElementById('moduleTitle').focus()" class="w-full text-left border border-neutral-200 hover:border-indigo-300 hover:bg-indigo-50 rounded-large p-4 transition-colors">
+            <p class="font-semibold text-neutral-900 text-sm">Create New Module</p>
+            <p class="text-xs text-neutral-500 mt-1">Organize course structure</p>
+          </button>
+
+          <button onclick="document.getElementById('lessonTitle').focus()" class="w-full text-left border border-neutral-200 hover:border-violet-300 hover:bg-violet-50 rounded-large p-4 transition-colors">
+            <p class="font-semibold text-neutral-900 text-sm">Add New Lesson</p>
+            <p class="text-xs text-neutral-500 mt-1">Add overview, video, and notes</p>
+          </button>
+
+          <button onclick="document.getElementById('quizTitle').focus()" class="w-full text-left border border-neutral-200 hover:border-emerald-300 hover:bg-emerald-50 rounded-large p-4 transition-colors">
+            <p class="font-semibold text-neutral-900 text-sm">Build Module Quiz</p>
+            <p class="text-xs text-neutral-500 mt-1">Create and edit quiz questions</p>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-large shadow-custom p-6 xl:col-span-2">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-heading font-bold text-xl text-neutral-900">Content Health</h2>
+          <span class="text-xs text-neutral-500">Live overview</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="border border-neutral-200 rounded-large p-5">
+            <p class="text-sm text-neutral-500">Lesson Completion</p>
+            <p id="healthLessonCoverage" class="font-heading font-bold text-2xl text-neutral-900 mt-2">0%</p>
+            <div class="w-full h-2 bg-neutral-100 rounded-full mt-3 overflow-hidden">
+              <div id="healthLessonBar" class="h-full bg-indigo-600 rounded-full" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="border border-neutral-200 rounded-large p-5">
+            <p class="text-sm text-neutral-500">Quiz Coverage</p>
+            <p id="healthQuizCoverage" class="font-heading font-bold text-2xl text-neutral-900 mt-2">0%</p>
+            <div class="w-full h-2 bg-neutral-100 rounded-full mt-3 overflow-hidden">
+              <div id="healthQuizBar" class="h-full bg-violet-600 rounded-full" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="border border-neutral-200 rounded-large p-5">
+            <p class="text-sm text-neutral-500">Resources Added</p>
+            <p id="healthResourcesCount" class="font-heading font-bold text-2xl text-neutral-900 mt-2">0</p>
+            <p class="text-xs text-neutral-500 mt-3">Across all editable lessons</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-heading font-bold text-xl text-neutral-900">Add Module</h2>
+          <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-small">Structure</span>
+        </div>
+
+        <form id="moduleForm" class="space-y-4">
+          <select id="moduleCourseId" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm bg-white" required>
+            <option value="">Select Course</option>
+          </select>
+
+          <input
+            id="moduleTitle"
+            class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm"
+            placeholder="Module Title"
+            required
+          />
+
+          <input
+            id="moduleDescription"
+            class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm"
+            placeholder="Module Description"
+          />
+
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-3 rounded-small transition-colors">
+            Add Module
+          </button>
+        </form>
+      </div>
+
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-heading font-bold text-xl text-neutral-900">Add Lesson</h2>
+          <span class="text-xs font-semibold text-violet-600 bg-violet-50 px-2.5 py-1 rounded-small">Teaching</span>
+        </div>
+
+        <form id="lessonForm" class="space-y-4">
+          <select id="lessonCourseId" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm bg-white" required>
+            <option value="">Select Course</option>
+          </select>
+
+          <select id="lessonModuleId" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm bg-white" required>
+            <option value="">Select Module</option>
+          </select>
+
+          <input
+            id="lessonTitle"
+            class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm"
+            placeholder="Lesson Title"
+            required
+          />
+
+          <input
+            id="videoUrl"
+            class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm"
+            placeholder="Video URL"
+          />
+
+          <textarea
+            id="contentHtml"
+            rows="4"
+            class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm"
+            placeholder="Lesson Overview HTML"
+          ></textarea>
+
+          <textarea
+            id="teacherNotes"
+            rows="3"
+            class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm"
+            placeholder="Teacher Notes"
+          ></textarea>
+
+          <button type="submit" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold px-5 py-3 rounded-small transition-colors">
+            Add Lesson
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-large shadow-custom p-6 mb-6">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="font-heading font-bold text-xl text-neutral-900">Edit Existing Lesson</h2>
+        <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-small">Update</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+        <select id="editCourseId" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm bg-white">
+          <option value="">Select Course</option>
+        </select>
+        <select id="editModuleId" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm bg-white">
+          <option value="">Select Module</option>
+        </select>
+        <select id="editLessonId" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm bg-white">
+          <option value="">Select Lesson</option>
+        </select>
+      </div>
+
+      <form id="editLessonForm" class="space-y-4">
+        <input id="editLessonTitle" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm" placeholder="Lesson Title" />
+        <input id="editVideoUrl" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm" placeholder="Video URL" />
+        <textarea id="editContentHtml" rows="6" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm" placeholder="Lesson Overview HTML"></textarea>
+        <textarea id="editTeacherNotes" rows="4" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm" placeholder="Teacher Notes"></textarea>
+
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-small transition-colors">
+          Save Lesson Changes
+        </button>
+      </form>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-heading font-bold text-xl text-neutral-900">Add Resource</h2>
+          <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-small">Resources</span>
+        </div>
+
+        <form id="resourceForm" class="space-y-4">
+          <input id="resourceTitle" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm" placeholder="Resource Title" />
+
+          <select id="resourceType" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm bg-white">
+            <option value="pdf">PDF</option>
+            <option value="zip">ZIP</option>
+            <option value="link">Link</option>
+            <option value="doc">Doc</option>
+            <option value="other">Other</option>
+          </select>
+
+          <input id="resourceUrl" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm" placeholder="Resource URL" />
+          <input id="resourceSubtitle" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm" placeholder="Subtitle / description" />
+
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-3 rounded-small transition-colors">
+            Add Resource
+          </button>
+        </form>
+      </div>
+
+      <div class="bg-white rounded-large shadow-custom p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-heading font-bold text-xl text-neutral-900">Lesson Resources</h2>
+          <span class="text-xs text-neutral-500">Selected lesson</span>
+        </div>
+        <div id="teacherResourceList" class="space-y-3"></div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-large shadow-custom p-6 mt-6">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="font-heading font-bold text-xl text-neutral-900">Create / Edit Module Quiz</h2>
+        <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-small">Assessment</span>
+      </div>
+
+      <form id="quizForm" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <select id="quizCourseId" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm bg-white" required>
+            <option value="">Select Course</option>
+          </select>
+
+          <select id="quizModuleId" class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm bg-white" required>
+            <option value="">Select Module</option>
+          </select>
+        </div>
+
+        <input
+          id="quizTitle"
+          class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm"
+          placeholder="Quiz Title"
+          required
+        />
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            id="quizPassingScore"
+            type="number"
+            class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm"
+            placeholder="Passing Score %"
+            value="70"
+          />
+          <input
+            id="quizDuration"
+            type="number"
+            class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm"
+            placeholder="Duration in Minutes"
+            value="15"
+          />
+        </div>
+
+        <textarea
+          id="quizQuestionsJson"
+          rows="10"
+          class="w-full border border-neutral-300 rounded-small px-4 py-3 text-sm font-mono"
+          placeholder='Paste questions JSON here'
+        ></textarea>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-small transition-colors">
+            Save Quiz
+          </button>
+
+          <button type="button" id="loadQuizBtn" class="border border-neutral-300 hover:bg-neutral-50 text-neutral-700 font-semibold px-6 py-3 rounded-small transition-colors">
+            Load Existing Quiz
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-5 p-4 bg-neutral-50 border border-neutral-200 rounded-large">
+        <p class="text-sm font-semibold text-neutral-800 mb-2">Questions JSON format</p>
+        <pre class="text-xs text-neutral-600 whitespace-pre-wrap leading-relaxed">[
+  {
+    "questionText": "Which HTML tag is used for the largest heading?",
+    "options": ["&lt;h6&gt;", "&lt;heading&gt;", "&lt;h1&gt;", "&lt;head&gt;"],
+    "correctAnswer": 2,
+    "explanation": "The &lt;h1&gt; tag represents the largest heading.",
+    "marks": 1
+  }
+]</pre>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let currentEditLessonId = "";
+    let dashboardCourses = [];
+    let dashboardModules = [];
+    let dashboardLessons = [];
+    let dashboardQuizCount = 0;
+    let dashboardResourceCount = 0;
+
+    function refreshDashboardHealth() {
+      const courses = dashboardCourses.length;
+      const modules = dashboardModules.length;
+      const lessons = dashboardLessons.length;
+      const quizzes = dashboardQuizCount;
+
+      document.getElementById("summaryCourses").textContent = courses;
+      document.getElementById("summaryModules").textContent = modules;
+      document.getElementById("summaryLessons").textContent = lessons;
+      document.getElementById("summaryQuizzes").textContent = quizzes;
+
+      const lessonCoverage = modules ? Math.min(100, Math.round((lessons / modules) * 100)) : 0;
+      const quizCoverage = modules ? Math.min(100, Math.round((quizzes / modules) * 100)) : 0;
+
+      document.getElementById("healthLessonCoverage").textContent = `${lessonCoverage}%`;
+      document.getElementById("healthQuizCoverage").textContent = `${quizCoverage}%`;
+      document.getElementById("healthResourcesCount").textContent = dashboardResourceCount;
+
+      document.getElementById("healthLessonBar").style.width = `${lessonCoverage}%`;
+      document.getElementById("healthQuizBar").style.width = `${quizCoverage}%`;
+    }
+
+    async function loadCoursesIntoSelects() {
+      const res = await fetch("/api/teacher/courses", { credentials: "include" });
+      const courses = await res.json();
+      dashboardCourses = Array.isArray(courses) ? courses : [];
+
+      const ids = ["moduleCourseId", "lessonCourseId", "editCourseId", "quizCourseId"];
+      ids.forEach(id => {
+        const select = document.getElementById(id);
+        select.innerHTML = `<option value="">Select Course</option>`;
+        dashboardCourses.forEach(course => {
+          const option = document.createElement("option");
+          option.value = course._id;
+          option.textContent = course.title;
+          select.appendChild(option);
+        });
+      });
+
+      refreshDashboardHealth();
+    }
+
+    async function loadModulesForSelect(courseId, targetId) {
+      const res = await fetch(`/api/teacher/courses/${courseId}/modules`, {
+        credentials: "include"
+      });
+      const modules = await res.json();
+
+      const select = document.getElementById(targetId);
+      select.innerHTML = `<option value="">Select Module</option>`;
+
+      if (Array.isArray(modules)) {
+        modules.forEach(module => {
+          const option = document.createElement("option");
+          option.value = module._id;
+          option.textContent = module.title;
+          select.appendChild(option);
+        });
+
+        if (targetId === "editModuleId") dashboardModules = modules;
+        refreshDashboardHealth();
+      }
+    }
+
+    async function loadQuizModules(courseId) {
+      await loadModulesForSelect(courseId, "quizModuleId");
+    }
+
+    async function loadLessonsForModule(moduleId) {
+      const res = await fetch(`/api/teacher/modules/${moduleId}/lessons`, {
+        credentials: "include"
+      });
+      const lessons = await res.json();
+
+      const select = document.getElementById("editLessonId");
+      select.innerHTML = `<option value="">Select Lesson</option>`;
+
+      dashboardLessons = Array.isArray(lessons) ? lessons : [];
+
+      dashboardLessons.forEach(lesson => {
+        const option = document.createElement("option");
+        option.value = lesson._id;
+        option.textContent = lesson.title;
+        select.appendChild(option);
+      });
+
+      refreshDashboardHealth();
+    }
+
+    async function loadLessonForEdit(lessonId) {
+      if (!lessonId) return;
+
+      const res = await fetch(`/api/teacher/lessons/${lessonId}`, {
+        credentials: "include"
+      });
+      const lesson = await res.json();
+
+      currentEditLessonId = lesson._id;
+      document.getElementById("editLessonTitle").value = lesson.title || "";
+      document.getElementById("editVideoUrl").value = lesson.videoUrl || "";
+      document.getElementById("editContentHtml").value = lesson.contentHtml || "";
+      document.getElementById("editTeacherNotes").value = lesson.teacherNotes || "";
+
+      renderTeacherResources(lesson.resources || []);
+    }
+
+    function renderTeacherResources(resources) {
+      const list = document.getElementById("teacherResourceList");
+      list.innerHTML = "";
+      dashboardResourceCount = resources.length || 0;
+      refreshDashboardHealth();
+
+      if (!resources.length) {
+        list.innerHTML = `<p class="text-sm text-neutral-500">No resources added yet.</p>`;
+        return;
+      }
+
+      resources.forEach(resource => {
+        const item = document.createElement("div");
+        item.className = "border border-neutral-200 rounded-large p-4 flex items-center justify-between gap-4";
+        item.innerHTML = `
+          <div>
+            <p class="font-semibold text-neutral-900 text-sm">${resource.title}</p>
+            <p class="text-xs text-neutral-500 mt-1">${resource.type} · ${resource.subtitle || ""}</p>
+          </div>
+          <button onclick="deleteResource('${resource._id}')" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded-small">
+            Delete
+          </button>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    async function deleteResource(resourceId) {
+      if (!currentEditLessonId) return;
+
+      await fetch(`/api/teacher/lessons/${currentEditLessonId}/resources/${resourceId}`, {
+        method: "DELETE",
+        credentials: "include"
+      });
+
+      loadLessonForEdit(currentEditLessonId);
+    }
+
+    document.getElementById("lessonCourseId").addEventListener("change", (e) => {
+      if (e.target.value) loadModulesForSelect(e.target.value, "lessonModuleId");
+    });
+
+    document.getElementById("quizCourseId").addEventListener("change", (e) => {
+      if (e.target.value) loadQuizModules(e.target.value);
+    });
+
+    document.getElementById("editCourseId").addEventListener("change", (e) => {
+      if (e.target.value) loadModulesForSelect(e.target.value, "editModuleId");
+    });
+
+    document.getElementById("editModuleId").addEventListener("change", (e) => {
+      if (e.target.value) loadLessonsForModule(e.target.value);
+    });
+
+    document.getElementById("editLessonId").addEventListener("change", (e) => {
+      if (e.target.value) loadLessonForEdit(e.target.value);
+    });
+
+    document.getElementById("moduleForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const courseId = document.getElementById("moduleCourseId").value;
+      const title = document.getElementById("moduleTitle").value;
+      const description = document.getElementById("moduleDescription").value;
+
+      await fetch(`/api/teacher/courses/${courseId}/modules`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ title, description })
+      });
+
+      document.getElementById("moduleForm").reset();
+      alert("Module added successfully");
+      loadCoursesIntoSelects();
+    });
+
+    document.getElementById("lessonForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const moduleId = document.getElementById("lessonModuleId").value;
+      const title = document.getElementById("lessonTitle").value;
+      const contentHtml = document.getElementById("contentHtml").value;
+      const videoUrl = document.getElementById("videoUrl").value;
+      const teacherNotes = document.getElementById("teacherNotes").value;
+
+      await fetch(`/api/teacher/modules/${moduleId}/lessons`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ title, contentHtml, videoUrl, teacherNotes })
+      });
+
+      document.getElementById("lessonForm").reset();
+      alert("Lesson added successfully");
+      if (document.getElementById("editModuleId").value === moduleId) {
+        loadLessonsForModule(moduleId);
+      }
+      loadCoursesIntoSelects();
+    });
+
+    document.getElementById("quizForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const moduleId = document.getElementById("quizModuleId").value;
+      const title = document.getElementById("quizTitle").value;
+      const passingScore = Number(document.getElementById("quizPassingScore").value || 70);
+      const durationMinutes = Number(document.getElementById("quizDuration").value || 15);
+
+      let questions = [];
+      try {
+        questions = JSON.parse(document.getElementById("quizQuestionsJson").value || "[]");
+      } catch (err) {
+        alert("Questions JSON is invalid");
+        return;
+      }
+
+      const res = await fetch(`/api/teacher/modules/${moduleId}/quiz`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ title, passingScore, durationMinutes, questions })
+      });
+
+      if (!res.ok) {
+        alert("Failed to save quiz");
+        return;
+      }
+
+      dashboardQuizCount += 1;
+      refreshDashboardHealth();
+      alert("Quiz saved successfully");
+    });
+
+    document.getElementById("loadQuizBtn").addEventListener("click", async () => {
+      const moduleId = document.getElementById("quizModuleId").value;
+      if (!moduleId) {
+        alert("Please select a module first");
+        return;
+      }
+
+      const res = await fetch(`/api/teacher/modules/${moduleId}/quiz`, {
+        credentials: "include"
+      });
+
+      if (!res.ok) {
+        alert("Could not load quiz");
+        return;
+      }
+
+      const quiz = await res.json();
+
+      if (!quiz) {
+        alert("No existing quiz found for this module");
+        return;
+      }
+
+      document.getElementById("quizTitle").value = quiz.title || "";
+      document.getElementById("quizPassingScore").value = quiz.passingScore || 70;
+      document.getElementById("quizDuration").value = quiz.durationMinutes || 15;
+      document.getElementById("quizQuestionsJson").value = JSON.stringify(quiz.questions || [], null, 2);
+    });
+
+    document.getElementById("editLessonForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentEditLessonId) return;
+
+      await fetch(`/api/teacher/lessons/${currentEditLessonId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          title: document.getElementById("editLessonTitle").value,
+          videoUrl: document.getElementById("editVideoUrl").value,
+          contentHtml: document.getElementById("editContentHtml").value,
+          teacherNotes: document.getElementById("editTeacherNotes").value
+        })
+      });
+
+      alert("Lesson updated successfully");
+      loadLessonForEdit(currentEditLessonId);
+    });
+
+    document.getElementById("resourceForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentEditLessonId) {
+        alert("Please select a lesson first.");
+        return;
+      }
+
+      await fetch(`/api/teacher/lessons/${currentEditLessonId}/resources`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          title: document.getElementById("resourceTitle").value,
+          type: document.getElementById("resourceType").value,
+          url: document.getElementById("resourceUrl").value,
+          subtitle: document.getElementById("resourceSubtitle").value
+        })
+      });
+
+      document.getElementById("resourceForm").reset();
+      loadLessonForEdit(currentEditLessonId);
+    });
+
+    document.addEventListener("DOMContentLoaded", loadCoursesIntoSelects);
+  </script>
+</body>
+</html>
